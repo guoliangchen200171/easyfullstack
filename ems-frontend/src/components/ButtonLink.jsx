@@ -5,6 +5,7 @@ const ButtonLink = ({ text, toAction }) => {
     <Link className="btn btn-outline-primary mb-2" to={toAction}>
       {text}
     </Link>
+      //这个是跳转路由
   );
 };
 

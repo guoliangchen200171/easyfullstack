@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+// 创建 React 根节点并渲染应用，用render把app和toast给挂上去
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ToastContainer />
