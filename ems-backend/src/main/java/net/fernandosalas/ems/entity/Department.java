@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -11,6 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "departments")
 public class Department {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,4 +24,14 @@ public class Department {
 
     @Column(name = "department_description")
     private String departmentDescription;
+
+    // 双向关联：一个部门对应多个学生
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Student> students;
+
+    public Department(Long id, String departmentName, String departmentDescription) {
+        this.id = id;
+        this.departmentName = departmentName;
+        this.departmentDescription = departmentDescription;
+    }
 }

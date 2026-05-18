@@ -1,6 +1,8 @@
 package net.fernandosalas.ems.controller;
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.DepartmentDto;
+import net.fernandosalas.ems.dto.StudentDto;
+import net.fernandosalas.ems.entity.Student;
 import net.fernandosalas.ems.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,5 +47,10 @@ public class DepartmentController {
     public ResponseEntity<String> deleteDepartment(@PathVariable("id") Long departmentId) {
         departmentService.deleteDepartment(departmentId);
         return new ResponseEntity<>("Delete Department Successfully", HttpStatus.OK);
+    }
+    @GetMapping("{id}/students")
+    public ResponseEntity<List<StudentDto>> getStudentsByDepartment(@PathVariable("id") Long departmentId) {
+        List<StudentDto> students = departmentService.getStudentsByDepartmentId(departmentId);
+        return new ResponseEntity<>(students, HttpStatus.OK);
     }
 }
