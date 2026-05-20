@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.List;
 
 @Entity
@@ -26,12 +25,7 @@ public class Department {
     private String departmentDescription;
 
     // 双向关联：一个部门对应多个学生
-    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
     private List<Student> students;
 
-    public Department(Long id, String departmentName, String departmentDescription) {
-        this.id = id;
-        this.departmentName = departmentName;
-        this.departmentDescription = departmentDescription;
-    }
 }
