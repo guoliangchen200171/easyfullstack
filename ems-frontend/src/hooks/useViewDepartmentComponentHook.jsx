@@ -10,6 +10,7 @@ const useViewDepartmentComponentHook = () => {
   const [department, setDepartment] = useState(null);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const searchDepartment = async (e) => {
     e.preventDefault();
@@ -18,22 +19,29 @@ const useViewDepartmentComponentHook = () => {
       return;
     }
 
+    const id = departmentIdInput.trim();
     setLoading(true);
     setDepartment(null);
     setStudents([]);
+    setErrorMessage("");
 
     try {
-      const [deptRes, studentsRes] = await Promise.all([
-        getDepartmentById(departmentIdInput.trim()),
-        getStudentsByDepartmentId(departmentIdInput.trim()),
-      ]);
+      const deptRes = await getDepartmentById(id);
       setDepartment(deptRes.data);
-      setStudents(studentsRes.data);
+
+      try {
+        const studentsRes = await getStudentsByDepartmentId(id);
+        setStudents(studentsRes.data);
+      } catch {
+        setStudents([]);
+      }
     } catch (error) {
-      if (error.response?.status === 404) {
-        toast.error("未找到该部门，请检查 ID 是否正确");
+      setDepartment(null);
+      setStudents([]);
+      if (!error.response) {
+        toast.error("无法连接服务器，请稍后重试");
       } else {
-        toast.error("查询失败，请确认后端服务已启动");
+        setErrorMessage(`查找的部门 ID（${id}）不存在`);
       }
     } finally {
       setLoading(false);
@@ -46,6 +54,7 @@ const useViewDepartmentComponentHook = () => {
     department,
     students,
     loading,
+    errorMessage,
     searchDepartment,
   };
 };

@@ -61,7 +61,7 @@ public class DepartmentServiceImplementation implements DepartmentService {
     public List<StudentDto> getStudentsByDepartmentId(Long departmentId) {
         // 1. 查询部门
         Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Department was not found with id: " + departmentId));
 
         // 2. 获取学生列表（LAZY）
         List<Student> students = department.getStudents();

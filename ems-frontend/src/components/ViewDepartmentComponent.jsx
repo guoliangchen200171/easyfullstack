@@ -8,6 +8,7 @@ const ViewDepartmentComponent = () => {
     department,
     students,
     loading,
+    errorMessage,
     searchDepartment,
   } = useViewDepartmentComponentHook();
 
@@ -39,6 +40,12 @@ const ViewDepartmentComponent = () => {
                 {loading ? "查询中..." : "查询"}
               </button>
             </form>
+
+            {errorMessage && (
+              <div className="alert alert-warning mt-3" role="alert">
+                {errorMessage}
+              </div>
+            )}
 
             {department && (
               <div className="mt-4">
