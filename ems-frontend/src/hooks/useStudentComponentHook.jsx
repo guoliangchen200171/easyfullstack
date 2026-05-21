@@ -44,7 +44,18 @@ const useStudentComponentHook = () => {
           navigate("/");
         }
       } catch (error) {
-        toast.error("An error occurred. Please try again.");
+        const status = error.response?.status;
+        const message = error.response?.data?.message;
+
+        if (status === 409) {
+          toast.error(message || "该邮箱已被注册，请使用其他邮箱");
+        } else if (status === 404) {
+          toast.error(message || "所选部门不存在");
+        } else if (!error.response) {
+          toast.error("无法连接服务器，请稍后重试");
+        } else {
+          toast.error(message || "保存失败，请稍后重试");
+        }
         console.error("Error saving/updating student:", error);
       }
     } else {

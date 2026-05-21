@@ -3,6 +3,7 @@ import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.StudentDto;
 import net.fernandosalas.ems.entity.Department;
 import net.fernandosalas.ems.entity.Student;
+import net.fernandosalas.ems.exception.EmailAlreadyExistsException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
 import net.fernandosalas.ems.mapper.StudentMapper;
 import net.fernandosalas.ems.repository.DepartmentRepository;
@@ -24,6 +25,10 @@ public class StudentServiceImplementation implements StudentService {
     private DepartmentRepository departmentRepository;
     @Override
     public StudentDto createStudent(StudentDto studentDto) {
+        if (studentRepository.existsByEmail(studentDto.getEmail())) {
+            throw new EmailAlreadyExistsException("该邮箱已被注册，请使用其他邮箱");
+        }
+
         Student student = StudentMapper.mapToStudent(studentDto);
 
         Department department = departmentRepository.findById(studentDto.getDepartmentId())
@@ -53,6 +58,10 @@ public class StudentServiceImplementation implements StudentService {
     public StudentDto updateStudent(Long studentId, StudentDto studentDto) {
         Student student = studentRepository.findById(studentId).orElseThrow(()->
                 new ResourceNotFoundException("Student was not found with given id: " + studentId));
+
+        if (studentRepository.existsByEmailAndIdNot(studentDto.getEmail(), studentId)) {
+            throw new EmailAlreadyExistsException("该邮箱已被注册，请使用其他邮箱");
+        }
 
         student.setFirstName(studentDto.getFirstName());
         student.setLastName(studentDto.getLastName());
