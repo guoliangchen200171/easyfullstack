@@ -13,10 +13,10 @@ public class DepartmentMapper {
     }
 
     public static Department mapToDepartment(DepartmentDto departmentDto) {
-        return new Department(
-                departmentDto.getId(),
-                departmentDto.getDepartmentName(),
-                departmentDto.getDepartmentDescription()
-        );
+        Department department = new Department();
+        department.setId(departmentDto.getId());
+        department.setDepartmentName(departmentDto.getDepartmentName());
+        department.setDepartmentDescription(departmentDto.getDepartmentDescription());
+        return department;
     }
 }
