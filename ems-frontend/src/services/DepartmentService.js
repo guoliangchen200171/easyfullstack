@@ -21,3 +21,7 @@ export const updateDeparment = (id, department) => {
 export const deleteDepartment = (id) => {
   return axios.delete(REST_API_URL + "/" + id);
 };
+
+export const getStudentsByDepartmentId = (id) => {
+  return axios.get(REST_API_URL + "/" + id + "/students");
+};

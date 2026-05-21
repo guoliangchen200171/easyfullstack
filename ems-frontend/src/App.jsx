@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StudentComponent from "./components/StudentComponent";
 import ListDepartmentComponent from "./components/ListDepartmentComponent";
 import DepartmentComponent from "./components/DepartmentComponent";
+import ViewDepartmentComponent from "./components/ViewDepartmentComponent";
 
 function App() {
   return (
@@ -21,6 +22,10 @@ function App() {
           <Route
             path="/edit-department/:id"
             element={<DepartmentComponent />}
+          />
+          <Route
+            path="/view-department"
+            element={<ViewDepartmentComponent />}
           />
         </Routes>
       </BrowserRouter>

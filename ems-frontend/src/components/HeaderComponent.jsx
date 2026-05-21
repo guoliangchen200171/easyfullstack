@@ -20,6 +20,11 @@ const HeaderComponent = () => {
                   Departments
                 </NavLink>
               </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/view-department">
+                  查询部门
+                </NavLink>
+              </li>
             </ul>
           </div>
         </nav>

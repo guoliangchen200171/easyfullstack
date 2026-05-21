@@ -9,6 +9,7 @@ const ListDepartmentComponent = () => {
     <div className="container">
       <h2 className="text-center py-3">List of Departments</h2>
       <ButtonLink text="Add Department" toAction="/add-department" />
+      <ButtonLink text="按 ID 查询" toAction="/view-department" />
       <table className="table table-striped">
         <thead>
           <tr>
