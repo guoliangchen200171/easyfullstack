@@ -19,6 +19,7 @@ public class PetServiceImplementation implements PetService {
 
     @Override
     public Pet createPet(Pet pet) {
+        pet.setAdopted(false);
         return petRepository.save(pet);
     }
 
@@ -41,6 +42,7 @@ public class PetServiceImplementation implements PetService {
         existingPet.setDescription(pet.getDescription());
         existingPet.setAge(pet.getAge());
         existingPet.setCategory(pet.getCategory());
+        existingPet.setAdopted(pet.isAdopted());
         return petRepository.save(existingPet);
     }
 

@@ -31,4 +31,7 @@ public class Pet {
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
     private PetCategory category;
+
+    @Column(name = "adopted", nullable = false)
+    private boolean adopted = false;
 }

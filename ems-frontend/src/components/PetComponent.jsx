@@ -11,8 +11,11 @@ const PetComponent = () => {
     setAge,
     category,
     setCategory,
+    adopted,
+    setAdopted,
     title,
     saveOrUpdatePet,
+    id,
   } = usePetComponentHook();
 
   return (
@@ -69,6 +72,23 @@ const PetComponent = () => {
                   <option value="dog">Dog</option>
                 </select>
               </div>
+              {id && (
+                <div className="form-group mb-2">
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      name="adopted"
+                      className="form-check-input"
+                      id="adopted"
+                      checked={adopted}
+                      onChange={(e) => setAdopted(e.target.checked)}
+                    />
+                    <label className="form-check-label" htmlFor="adopted">
+                      Adopted
+                    </label>
+                  </div>
+                </div>
+              )}
               <button
                 className="btn btn-outline-success"
                 onClick={saveOrUpdatePet}

@@ -15,6 +15,7 @@ const ListPetComponent = () => {
             <th scope="col">Description</th>
             <th scope="col">Age</th>
             <th scope="col">Category</th>
+            <th scope="col">Adopted</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -26,6 +27,7 @@ const ListPetComponent = () => {
                 <td>{item.description}</td>
                 <td>{item.age}</td>
                 <td>{item.category}</td>
+                <td>{item.adopted ? "Yes" : "No"}</td>
                 <td>
                   <button
                     className="btn btn-outline-info me-2"

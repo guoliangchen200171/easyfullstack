@@ -8,6 +8,7 @@ const usePetComponentHook = () => {
   const [description, setDescription] = useState("");
   const [age, setAge] = useState("");
   const [category, setCategory] = useState("");
+  const [adopted, setAdopted] = useState(false);
   const [title, setTitle] = useState("");
   const { id } = useParams();
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const usePetComponentHook = () => {
     setDescription(pet.description);
     setAge(pet.age ?? "");
     setCategory(pet.category ?? "");
+    setAdopted(pet.adopted ?? false);
   };
 
   useEffect(() => {
@@ -27,6 +29,7 @@ const usePetComponentHook = () => {
       loadPet(id);
     } else {
       setTitle("Add Pet");
+      setAdopted(false);
     }
   }, [id]);
 
@@ -37,6 +40,7 @@ const usePetComponentHook = () => {
       description,
       age: age === "" ? null : Number(age),
       category,
+      adopted: id ? adopted : false,
     };
 
     if (name && category) {
@@ -63,8 +67,11 @@ const usePetComponentHook = () => {
     setAge,
     category,
     setCategory,
+    adopted,
+    setAdopted,
     title,
     saveOrUpdatePet,
+    id,
   };
 };
 
