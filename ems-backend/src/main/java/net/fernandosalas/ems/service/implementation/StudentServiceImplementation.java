@@ -6,10 +6,12 @@ import net.fernandosalas.ems.entity.Pet;
 import net.fernandosalas.ems.entity.Student;
 import net.fernandosalas.ems.exception.EmailAlreadyExistsException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
+import net.fernandosalas.ems.exception.StudentHasNoPetException;
 import net.fernandosalas.ems.mapper.StudentMapper;
 import net.fernandosalas.ems.repository.DepartmentRepository;
 import net.fernandosalas.ems.repository.PetRepository;
 import net.fernandosalas.ems.repository.StudentRepository;
+import net.fernandosalas.ems.service.AdoptionHistoryService;
 import net.fernandosalas.ems.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,9 @@ public class StudentServiceImplementation implements StudentService {
 
     @Autowired
     private PetRepository petRepository;
+
+    @Autowired
+    private AdoptionHistoryService adoptionHistoryService;
     @Override
     public StudentDto createStudent(StudentDto studentDto) {
         if (studentRepository.existsByEmail(studentDto.getEmail())) {
@@ -87,10 +92,29 @@ public class StudentServiceImplementation implements StudentService {
                 new ResourceNotFoundException("Student was not found with given id: " + studentId));
         if (student.getPet() != null) {
             Pet pet = student.getPet();
+            adoptionHistoryService.recordReturn(studentId);
             pet.setStudent(null);
             pet.setAdopted(false);
             petRepository.save(pet);
         }
         studentRepository.deleteById(studentId);
+    }
+
+    @Override
+    public StudentDto returnPet(Long studentId) {
+        Student student = studentRepository.findByIdWithDetails(studentId).orElseThrow(() ->
+                new ResourceNotFoundException("Student was not found with given id: " + studentId));
+
+        Pet pet = student.getPet();
+        if (pet == null) {
+            throw new StudentHasNoPetException("该学生没有宠物可送还");
+        }
+
+        pet.setStudent(null);
+        pet.setAdopted(false);
+        petRepository.save(pet);
+        adoptionHistoryService.recordReturn(studentId);
+
+        return StudentMapper.mapToStudentDto(studentRepository.findByIdWithDetails(studentId).orElseThrow());
     }
 }

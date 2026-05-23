@@ -2,7 +2,7 @@ import ButtonLink from "./ButtonLink";
 import useListStudentComponentHook from "../hooks/useListStudentComponentHook";
 
 const ListStudentComponent = () => {
-  const { students, getDepartmentName, updateStudent, adoptPetForStudent, deleteStudentById } =
+  const { students, getDepartmentName, updateStudent, adoptPetForStudent, returnPetForStudent, deleteStudentById } =
     useListStudentComponentHook();
 
   return (
@@ -31,12 +31,21 @@ const ListStudentComponent = () => {
                 <td>{item.petName || "No pet"}</td>
                 {students.length > 0 && (
                   <td>
-                    <button
-                      className="btn btn-outline-success me-2"
-                      onClick={() => adoptPetForStudent(item)}
-                    >
-                      Adopt
-                    </button>
+                    {item.petId ? (
+                      <button
+                        className="btn btn-outline-warning me-2"
+                        onClick={() => returnPetForStudent(item)}
+                      >
+                        Return Pet
+                      </button>
+                    ) : (
+                      <button
+                        className="btn btn-outline-success me-2"
+                        onClick={() => adoptPetForStudent(item)}
+                      >
+                        Adopt
+                      </button>
+                    )}
                     <button
                       className="btn btn-outline-info me-2"
                       onClick={() => updateStudent(item.id)}

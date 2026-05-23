@@ -8,6 +8,7 @@ import net.fernandosalas.ems.exception.ResourceNotFoundException;
 import net.fernandosalas.ems.exception.StudentAlreadyHasPetException;
 import net.fernandosalas.ems.repository.PetRepository;
 import net.fernandosalas.ems.repository.StudentRepository;
+import net.fernandosalas.ems.service.AdoptionHistoryService;
 import net.fernandosalas.ems.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ public class PetServiceImplementation implements PetService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private AdoptionHistoryService adoptionHistoryService;
 
     @Override
     public Pet createPet(Pet pet) {
@@ -93,7 +97,9 @@ public class PetServiceImplementation implements PetService {
 
         pet.setStudent(student);
         pet.setAdopted(true);
-        return petRepository.save(pet);
+        Pet savedPet = petRepository.save(pet);
+        adoptionHistoryService.recordAdoption(student, savedPet);
+        return savedPet;
     }
 
     @Override

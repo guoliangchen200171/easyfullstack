@@ -8,4 +8,5 @@ public interface StudentService {
     List<StudentDto> getAllStudents();
     StudentDto updateStudent(Long studentId, StudentDto studentDto);
     void deleteStudent(Long studentId);
+    StudentDto returnPet(Long studentId);
 }

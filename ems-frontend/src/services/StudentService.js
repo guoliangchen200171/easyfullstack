@@ -21,3 +21,7 @@ export const getStudentById = (id) => {
 export const updateStudent = (id, student) => {
   return axios.put(`${REST_API_URL}/${id}`, student);
 };
+
+export const returnPet = (studentId) => {
+  return axios.put(`${REST_API_URL}/${studentId}/return-pet`);
+};

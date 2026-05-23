@@ -8,6 +8,7 @@ import DepartmentComponent from "./components/DepartmentComponent";
 import ViewDepartmentComponent from "./components/ViewDepartmentComponent";
 import ListPetComponent from "./components/ListPetComponent";
 import PetComponent from "./components/PetComponent";
+import ListAdoptionHistoryComponent from "./components/ListAdoptionHistoryComponent";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/pets" element={<ListPetComponent />} />
           <Route path="/add-pet" element={<PetComponent />} />
           <Route path="/edit-pet/:id" element={<PetComponent />} />
+          <Route path="/adoption-history" element={<ListAdoptionHistoryComponent />} />
         </Routes>
       </BrowserRouter>
     </>

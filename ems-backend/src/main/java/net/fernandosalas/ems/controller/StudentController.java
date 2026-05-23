@@ -37,6 +37,12 @@ public class StudentController {
        StudentDto newStudentDto =  studentService.updateStudent(studentId, studentDto);
        return new ResponseEntity<>(newStudentDto, HttpStatus.OK);
     }
+    @PutMapping("{studentId}/return-pet")
+    public ResponseEntity<StudentDto> returnPet(@PathVariable("studentId") Long studentId) {
+        StudentDto studentDto = studentService.returnPet(studentId);
+        return new ResponseEntity<>(studentDto, HttpStatus.OK);
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteStudent(@PathVariable("id") Long studentId) {
         studentService.deleteStudent(studentId);
