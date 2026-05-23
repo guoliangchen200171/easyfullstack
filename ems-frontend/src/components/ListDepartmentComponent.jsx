@@ -15,8 +15,7 @@ const ListDepartmentComponent = () => {
           <tr>
             <th scope="col">Department Name</th>
             <th scope="col">Department Description</th>
-            <th scope="col">Action #1</th>
-            <th scope="col">Action #2</th>
+            <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -32,8 +31,6 @@ const ListDepartmentComponent = () => {
                   >
                     Update
                   </button>
-                </td>
-                <td>
                   <button
                     className="btn btn-outline-danger"
                     onClick={() => removeDepartment(item.id)}
