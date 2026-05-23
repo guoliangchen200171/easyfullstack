@@ -16,6 +16,7 @@ const ListStudentComponent = () => {
             <th scope="col">Employee Last Name</th>
             <th scope="col">Employee Email</th>
             <th scope="col">Department</th>
+            <th scope="col">Pet</th>
             <th scope="col">Action #1</th>
             <th scope="col">Action #2</th>
           </tr>
@@ -28,6 +29,7 @@ const ListStudentComponent = () => {
                 <td>{item.lastName}</td>
                 <td>{item.email}</td>
                 <td>{getDepartmentName(item.departmentId)}</td>
+                <td>{item.petName || "No pet"}</td>
                 <td>
                   <button
                     className="btn btn-outline-danger"

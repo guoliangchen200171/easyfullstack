@@ -1,4 +1,5 @@
 package net.fernandosalas.ems.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,15 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class StudentDto {
     private Long id;
-
     private String firstName;
-
     private String lastName;
-
     private String email;
-
     private Long departmentId;
-
-    public StudentDto(Long id, String firstName, String lastName, String email) {
-    }
+    private Long petId;
+    private String petName;
 }

@@ -2,11 +2,13 @@ package net.fernandosalas.ems.service.implementation;
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.StudentDto;
 import net.fernandosalas.ems.entity.Department;
+import net.fernandosalas.ems.entity.Pet;
 import net.fernandosalas.ems.entity.Student;
 import net.fernandosalas.ems.exception.EmailAlreadyExistsException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
 import net.fernandosalas.ems.mapper.StudentMapper;
 import net.fernandosalas.ems.repository.DepartmentRepository;
+import net.fernandosalas.ems.repository.PetRepository;
 import net.fernandosalas.ems.repository.StudentRepository;
 import net.fernandosalas.ems.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class StudentServiceImplementation implements StudentService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private PetRepository petRepository;
     @Override
     public StudentDto createStudent(StudentDto studentDto) {
         if (studentRepository.existsByEmail(studentDto.getEmail())) {
@@ -41,14 +46,14 @@ public class StudentServiceImplementation implements StudentService {
 
     @Override
     public StudentDto getStudentById(Long studentId) {
-       Student student = studentRepository.findById(studentId).orElseThrow(()->
+       Student student = studentRepository.findByIdWithDetails(studentId).orElseThrow(()->
                 new ResourceNotFoundException("Student was not found with given id: " + studentId));
         return StudentMapper.mapToStudentDto(student);
     }
 
     @Override
     public List<StudentDto> getAllStudents() {
-       List<Student> studentList =  studentRepository.findAll();
+       List<Student> studentList = studentRepository.findAllWithDetails();
         return studentList.stream()
                 .map(StudentMapper::mapToStudentDto)
                 .collect(Collectors.toList());
@@ -56,7 +61,7 @@ public class StudentServiceImplementation implements StudentService {
 
     @Override
     public StudentDto updateStudent(Long studentId, StudentDto studentDto) {
-        Student student = studentRepository.findById(studentId).orElseThrow(()->
+        Student student = studentRepository.findByIdWithDetails(studentId).orElseThrow(()->
                 new ResourceNotFoundException("Student was not found with given id: " + studentId));
 
         if (studentRepository.existsByEmailAndIdNot(studentDto.getEmail(), studentId)) {
@@ -78,8 +83,14 @@ public class StudentServiceImplementation implements StudentService {
 
     @Override
     public void deleteStudent(Long studentId) {
-        Student student = studentRepository.findById(studentId).orElseThrow(()->
+        Student student = studentRepository.findByIdWithDetails(studentId).orElseThrow(()->
                 new ResourceNotFoundException("Student was not found with given id: " + studentId));
+        if (student.getPet() != null) {
+            Pet pet = student.getPet();
+            pet.setStudent(null);
+            pet.setAdopted(false);
+            petRepository.save(pet);
+        }
         studentRepository.deleteById(studentId);
     }
 }

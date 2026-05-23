@@ -1,5 +1,6 @@
 package net.fernandosalas.ems.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,4 +35,23 @@ public class Pet {
 
     @Column(name = "adopted", nullable = false)
     private boolean adopted = false;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", unique = true)
+    @JsonIgnore
+    private Student student;
+
+    @Transient
+    private Long studentId;
+
+    public Long getStudentId() {
+        if (student != null) {
+            return student.getId();
+        }
+        return studentId;
+    }
+
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
+    }
 }

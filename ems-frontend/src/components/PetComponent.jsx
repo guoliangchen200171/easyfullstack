@@ -13,6 +13,9 @@ const PetComponent = () => {
     setCategory,
     adopted,
     setAdopted,
+    studentId,
+    setStudentId,
+    students,
     title,
     saveOrUpdatePet,
     id,
@@ -87,6 +90,27 @@ const PetComponent = () => {
                       Adopted
                     </label>
                   </div>
+                </div>
+              )}
+              {id && adopted && (
+                <div className="form-group mb-2">
+                  <label className="form-label">Student: </label>
+                  <select
+                    name="studentId"
+                    className="form-select"
+                    value={studentId}
+                    onChange={(e) => setStudentId(e.target.value)}
+                  >
+                    <option value="">Select Student</option>
+                    {students.map((student) => (
+                      <option key={student.id} value={student.id}>
+                        {student.firstName} {student.lastName}
+                        {student.petId && Number(student.petId) !== Number(id)
+                          ? " (has pet)"
+                          : ""}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               )}
               <button

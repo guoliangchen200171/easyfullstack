@@ -27,6 +27,10 @@ public class Student {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
-    @JsonIgnore   // 忽略序列化，防止套娃
+    @JsonIgnore
     private Department department;
+
+    @OneToOne(mappedBy = "student", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Pet pet;
 }
