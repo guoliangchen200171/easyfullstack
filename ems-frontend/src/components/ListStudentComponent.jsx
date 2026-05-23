@@ -17,8 +17,7 @@ const ListStudentComponent = () => {
             <th scope="col">Email</th>
             <th scope="col">Department</th>
             <th scope="col">Pet</th>
-            <th scope="col">Action #1</th>
-            <th scope="col">Action #2</th>
+            {students.length > 0 && <th scope="col">Action</th>}
           </tr>
         </thead>
         <tbody>
@@ -30,22 +29,22 @@ const ListStudentComponent = () => {
                 <td>{item.email}</td>
                 <td>{getDepartmentName(item.departmentId)}</td>
                 <td>{item.petName || "No pet"}</td>
-                <td>
-                  <button
-                    className="btn btn-outline-danger"
-                    onClick={() => deleteStudentById(item.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-outline-info"
-                    onClick={() => updateStudent(item.id)}
-                  >
-                    Update
-                  </button>
-                </td>
+                {students.length > 0 && (
+                  <td>
+                    <button
+                      className="btn btn-outline-info me-2"
+                      onClick={() => updateStudent(item.id)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      className="btn btn-outline-danger"
+                      onClick={() => deleteStudentById(item.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                )}
               </tr>
             );
           })}
