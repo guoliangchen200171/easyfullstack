@@ -40,6 +40,7 @@ public class PetServiceImplementation implements PetService {
         existingPet.setName(pet.getName());
         existingPet.setDescription(pet.getDescription());
         existingPet.setAge(pet.getAge());
+        existingPet.setCategory(pet.getCategory());
         return petRepository.save(existingPet);
     }
 

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.fernandosalas.ems.enums.PetCategory;
 
 @Entity
 @Getter
@@ -26,4 +27,8 @@ public class Pet {
 
     @Column(name = "age")
     private Integer age;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    private PetCategory category;
 }
