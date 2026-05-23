@@ -12,9 +12,9 @@ const ListStudentComponent = () => {
       <table className="table table-striped">
         <thead>
           <tr>
-            <th scope="col">Employee First Name</th>
-            <th scope="col">Employee Last Name</th>
-            <th scope="col">Employee Email</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
             <th scope="col">Department</th>
             <th scope="col">Pet</th>
             <th scope="col">Action #1</th>
