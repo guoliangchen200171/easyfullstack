@@ -7,6 +7,7 @@ import net.fernandosalas.ems.exception.PetAlreadyAdoptedException;
 import net.fernandosalas.ems.exception.PetNotAdoptedException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
 import net.fernandosalas.ems.exception.StudentAlreadyHasPetException;
+import net.fernandosalas.ems.exception.StudentBannedFromAdoptionException;
 import net.fernandosalas.ems.repository.PetRepository;
 import net.fernandosalas.ems.repository.StudentRepository;
 import net.fernandosalas.ems.service.AdoptionHistoryService;
@@ -72,6 +73,10 @@ public class PetServiceImplementation implements PetService {
                 }
             });
 
+            if (student.getReturnCount() >= 3) {
+                throw new StudentBannedFromAdoptionException("你退还次数过多被禁止领养");
+            }
+
             existingPet.setStudent(student);
             existingPet.setAdopted(true);
         } else {
@@ -98,6 +103,10 @@ public class PetServiceImplementation implements PetService {
             throw new StudentAlreadyHasPetException("最多只能有一只宠物");
         }
 
+        if (student.getReturnCount() >= 3) {
+            throw new StudentBannedFromAdoptionException("你退还次数过多被禁止领养");
+        }
+
         pet.setStudent(student);
         pet.setAdopted(true);
         pet.setAdoptionCount(pet.getAdoptionCount() + 1);
@@ -107,7 +116,7 @@ public class PetServiceImplementation implements PetService {
     }
 
     @Override
-    public Pet returnPet(Long petId) {
+    public Pet returnPet(Long petId, boolean incrementStudentReturnCount) {
         Pet pet = petRepository.findByIdWithStudent(petId)
                 .orElseThrow(() -> new ResourceNotFoundException("Pet was not found with id: " + petId));
 
@@ -115,11 +124,18 @@ public class PetServiceImplementation implements PetService {
             throw new PetNotAdoptedException("该宠物未被领养，无法归还");
         }
 
-        Long studentId = pet.getStudent().getId();
+        Student student = pet.getStudent();
+        Long studentId = student.getId();
         pet.setStudent(null);
         pet.setAdopted(false);
         pet.setReturnCount(pet.getReturnCount() + 1);
         Pet savedPet = petRepository.save(pet);
+
+        if (incrementStudentReturnCount) {
+            student.setReturnCount(student.getReturnCount() + 1);
+            studentRepository.save(student);
+        }
+
         adoptionHistoryService.recordReturn(studentId);
         return savedPet;
     }

@@ -41,6 +41,7 @@ public class StudentServiceImplementation implements StudentService {
                 .orElseThrow(()-> new ResourceNotFoundException("Department was not found with id: "
                                     + studentDto.getDepartmentId()));
         student.setDepartment(department);
+        student.setReturnCount(0);
         Student savedStudent =  studentRepository.save(student);
         return StudentMapper.mapToStudentDto(savedStudent);
     }
@@ -87,7 +88,7 @@ public class StudentServiceImplementation implements StudentService {
         Student student = studentRepository.findByIdWithDetails(studentId).orElseThrow(()->
                 new ResourceNotFoundException("Student was not found with given id: " + studentId));
         if (student.getPet() != null) {
-            petService.returnPet(student.getPet().getId());
+            petService.returnPet(student.getPet().getId(), false);
         }
         studentRepository.deleteById(studentId);
     }
@@ -102,7 +103,7 @@ public class StudentServiceImplementation implements StudentService {
             throw new StudentHasNoPetException("该学生没有宠物可送还");
         }
 
-        petService.returnPet(pet.getId());
+        petService.returnPet(pet.getId(), true);
 
         return StudentMapper.mapToStudentDto(studentRepository.findByIdWithDetails(studentId).orElseThrow());
     }

@@ -53,7 +53,7 @@ public class PetController {
 
     @PutMapping("{petId}/return")
     public ResponseEntity<Pet> returnPet(@PathVariable("petId") Long petId) {
-        Pet returnedPet = petService.returnPet(petId);
+        Pet returnedPet = petService.returnPet(petId, true);
         return new ResponseEntity<>(returnedPet, HttpStatus.OK);
     }
 

@@ -16,7 +16,7 @@ public interface PetService {
 
     Pet adoptPet(Long petId, Long studentId);
 
-    Pet returnPet(Long petId);
+    Pet returnPet(Long petId, boolean incrementStudentReturnCount);
 
     void deletePet(Long petId);
 }

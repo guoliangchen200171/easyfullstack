@@ -25,6 +25,9 @@ public class Student {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Column(name = "return_count", nullable = false)
+    private int returnCount = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     @JsonIgnore
