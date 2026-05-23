@@ -14,8 +14,7 @@ const ListPetComponent = () => {
             <th scope="col">Name</th>
             <th scope="col">Description</th>
             <th scope="col">Age</th>
-            <th scope="col">Action #1</th>
-            <th scope="col">Action #2</th>
+            <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -32,8 +31,6 @@ const ListPetComponent = () => {
                   >
                     Update
                   </button>
-                </td>
-                <td>
                   <button
                     className="btn btn-outline-danger"
                     onClick={() => removePet(item.id)}
