@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.entity.Pet;
 import net.fernandosalas.ems.entity.Student;
 import net.fernandosalas.ems.exception.PetAlreadyAdoptedException;
+import net.fernandosalas.ems.exception.PetNotAdoptedException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
 import net.fernandosalas.ems.exception.StudentAlreadyHasPetException;
 import net.fernandosalas.ems.repository.PetRepository;
@@ -32,6 +33,8 @@ public class PetServiceImplementation implements PetService {
     public Pet createPet(Pet pet) {
         pet.setAdopted(false);
         pet.setStudent(null);
+        pet.setAdoptionCount(0);
+        pet.setReturnCount(0);
         return petRepository.save(pet);
     }
 
@@ -97,8 +100,27 @@ public class PetServiceImplementation implements PetService {
 
         pet.setStudent(student);
         pet.setAdopted(true);
+        pet.setAdoptionCount(pet.getAdoptionCount() + 1);
         Pet savedPet = petRepository.save(pet);
         adoptionHistoryService.recordAdoption(student, savedPet);
+        return savedPet;
+    }
+
+    @Override
+    public Pet returnPet(Long petId) {
+        Pet pet = petRepository.findByIdWithStudent(petId)
+                .orElseThrow(() -> new ResourceNotFoundException("Pet was not found with id: " + petId));
+
+        if (!pet.isAdopted() || pet.getStudent() == null) {
+            throw new PetNotAdoptedException("该宠物未被领养，无法归还");
+        }
+
+        Long studentId = pet.getStudent().getId();
+        pet.setStudent(null);
+        pet.setAdopted(false);
+        pet.setReturnCount(pet.getReturnCount() + 1);
+        Pet savedPet = petRepository.save(pet);
+        adoptionHistoryService.recordReturn(studentId);
         return savedPet;
     }
 

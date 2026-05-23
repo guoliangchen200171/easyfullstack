@@ -36,6 +36,12 @@ public class Pet {
     @Column(name = "adopted", nullable = false)
     private boolean adopted = false;
 
+    @Column(name = "adoption_count", nullable = false)
+    private int adoptionCount = 0;
+
+    @Column(name = "return_count", nullable = false)
+    private int returnCount = 0;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", unique = true)
     @JsonIgnore

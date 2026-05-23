@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { listPets, deletePet, adoptPet } from "../services/PetService";
+import { listPets, deletePet, adoptPet, returnPetById } from "../services/PetService";
 import { getStudentById } from "../services/StudentService";
 import { toast } from "react-toastify";
 
@@ -77,6 +77,21 @@ const useListPetComponentHook = () => {
     navigate("/students");
   };
 
+  const returnPet = async (pet) => {
+    if (!pet.adopted) {
+      toast.error("该宠物未被领养，无法归还");
+      return;
+    }
+    try {
+      await returnPetById(pet.id);
+      toast.success("归还成功!");
+      getPets();
+    } catch (err) {
+      const message = err.response?.data?.message || "归还失败";
+      toast.error(message);
+    }
+  };
+
   return {
     pets,
     adoptStudent,
@@ -86,6 +101,7 @@ const useListPetComponentHook = () => {
     removePet,
     adoptPetForStudent,
     cancelAdopt,
+    returnPet,
   };
 };
 

@@ -10,6 +10,7 @@ const ListPetComponent = () => {
     removePet,
     adoptPetForStudent,
     cancelAdopt,
+    returnPet,
   } = useListPetComponentHook();
 
   return (
@@ -35,6 +36,8 @@ const ListPetComponent = () => {
             <th scope="col">Age</th>
             <th scope="col">Category</th>
             <th scope="col">Adopted</th>
+            <th scope="col">Adoption Count</th>
+            <th scope="col">Return Count</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -47,6 +50,8 @@ const ListPetComponent = () => {
                 <td>{item.age}</td>
                 <td>{item.category}</td>
                 <td>{item.adopted ? "Yes" : "No"}</td>
+                <td>{item.adoptionCount ?? 0}</td>
+                <td>{item.returnCount ?? 0}</td>
                 <td>
                   {isAdoptMode ? (
                     <button
@@ -64,6 +69,14 @@ const ListPetComponent = () => {
                       >
                         Update
                       </button>
+                      {item.adopted && (
+                        <button
+                          className="btn btn-outline-warning me-2"
+                          onClick={() => returnPet(item)}
+                        >
+                          Return
+                        </button>
+                      )}
                       <button
                         className="btn btn-outline-danger"
                         onClick={() => removePet(item.id)}
