@@ -3,6 +3,7 @@ package net.fernandosalas.ems.service.implementation;
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.entity.Pet;
 import net.fernandosalas.ems.entity.Student;
+import net.fernandosalas.ems.exception.PetAlreadyAdoptedException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
 import net.fernandosalas.ems.exception.StudentAlreadyHasPetException;
 import net.fernandosalas.ems.repository.PetRepository;
@@ -60,7 +61,7 @@ public class PetServiceImplementation implements PetService {
 
             petRepository.findByStudentId(studentId).ifPresent(existingStudentPet -> {
                 if (!existingStudentPet.getId().equals(petId)) {
-                    throw new StudentAlreadyHasPetException("Student already has a pet");
+                    throw new StudentAlreadyHasPetException("最多只能有一只宠物");
                 }
             });
 
@@ -72,6 +73,27 @@ public class PetServiceImplementation implements PetService {
         }
 
         return petRepository.save(existingPet);
+    }
+
+    @Override
+    public Pet adoptPet(Long petId, Long studentId) {
+        Pet pet = petRepository.findByIdWithStudent(petId)
+                .orElseThrow(() -> new ResourceNotFoundException("Pet was not found with id: " + petId));
+
+        if (pet.isAdopted() || pet.getStudent() != null) {
+            throw new PetAlreadyAdoptedException("宠物已经被领养");
+        }
+
+        Student student = studentRepository.findByIdWithDetails(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student was not found with id: " + studentId));
+
+        if (student.getPet() != null) {
+            throw new StudentAlreadyHasPetException("最多只能有一只宠物");
+        }
+
+        pet.setStudent(student);
+        pet.setAdopted(true);
+        return petRepository.save(pet);
     }
 
     @Override

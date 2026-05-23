@@ -37,6 +37,14 @@ const useListStudentComponentHook = () => {
     navigate(`/edit-student/${id}`);
   };
 
+  const adoptPetForStudent = (student) => {
+    if (student.petId) {
+      toast.error("最多只能有一只宠物");
+      return;
+    }
+    navigate(`/pets?studentId=${student.id}`);
+  };
+
   const deleteStudentById = async (id) => {
     await deleteStudent(id);
     toast.error("Student deleted successfully!");
@@ -50,6 +58,7 @@ const useListStudentComponentHook = () => {
     fetchDepartments,
     getDepartmentName,
     updateStudent,
+    adoptPetForStudent,
     deleteStudentById,
   };
 };

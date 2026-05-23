@@ -44,6 +44,13 @@ public class PetController {
         return new ResponseEntity<>(updatedPet, HttpStatus.OK);
     }
 
+    @PutMapping("{petId}/adopt/{studentId}")
+    public ResponseEntity<Pet> adoptPet(@PathVariable("petId") Long petId,
+                                        @PathVariable("studentId") Long studentId) {
+        Pet adoptedPet = petService.adoptPet(petId, studentId);
+        return new ResponseEntity<>(adoptedPet, HttpStatus.OK);
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<String> deletePet(@PathVariable("id") Long petId) {
         petService.deletePet(petId);

@@ -14,5 +14,7 @@ public interface PetService {
 
     Pet updatePet(Long petId, Pet pet);
 
+    Pet adoptPet(Long petId, Long studentId);
+
     void deletePet(Long petId);
 }

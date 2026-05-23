@@ -21,3 +21,7 @@ export const updatePet = (id, pet) => {
 export const deletePet = (id) => {
   return axios.delete(REST_API_URL + "/" + id);
 };
+
+export const adoptPet = (petId, studentId) => {
+  return axios.put(REST_API_URL + "/" + petId + "/adopt/" + studentId);
+};
