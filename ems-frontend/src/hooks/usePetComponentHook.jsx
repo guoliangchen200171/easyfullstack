@@ -7,6 +7,7 @@ const usePetComponentHook = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [age, setAge] = useState("");
+  const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const usePetComponentHook = () => {
     setName(pet.name);
     setDescription(pet.description);
     setAge(pet.age ?? "");
+    setCategory(pet.category ?? "");
   };
 
   useEffect(() => {
@@ -34,9 +36,10 @@ const usePetComponentHook = () => {
       name,
       description,
       age: age === "" ? null : Number(age),
+      category,
     };
 
-    if (name) {
+    if (name && category) {
       if (id) {
         await updatePet(id, pet);
         toast.info("Pet updated successfully!");
@@ -47,7 +50,7 @@ const usePetComponentHook = () => {
       toast.success("Pet added successfully!");
       navigate("/pets");
     } else {
-      toast.error("Please fill in the pet name!");
+      toast.error("Please fill in the pet name and category!");
     }
   };
 
@@ -58,6 +61,8 @@ const usePetComponentHook = () => {
     setDescription,
     age,
     setAge,
+    category,
+    setCategory,
     title,
     saveOrUpdatePet,
   };
