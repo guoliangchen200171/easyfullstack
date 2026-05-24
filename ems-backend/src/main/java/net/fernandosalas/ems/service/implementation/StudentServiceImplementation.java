@@ -1,6 +1,7 @@
 package net.fernandosalas.ems.service.implementation;
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.StudentDto;
+import net.fernandosalas.ems.dto.PageResponse;
 import net.fernandosalas.ems.entity.Department;
 import net.fernandosalas.ems.entity.Pet;
 import net.fernandosalas.ems.entity.Student;
@@ -15,6 +16,9 @@ import net.fernandosalas.ems.service.PetService;
 import net.fernandosalas.ems.service.StudentService;
 import net.fernandosalas.ems.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -67,6 +71,16 @@ public class StudentServiceImplementation implements StudentService {
         return studentList.stream()
                 .map(StudentMapper::mapToStudentDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PageResponse<StudentDto> getStudentsPage(int page, int size) {
+        Page<Student> studentPage = studentRepository.findAll(
+                PageRequest.of(page, size, Sort.by("id").ascending()));
+        List<StudentDto> content = studentPage.getContent().stream()
+                .map(StudentMapper::mapToStudentDto)
+                .collect(Collectors.toList());
+        return PageResponse.from(studentPage, content);
     }
 
     @Override

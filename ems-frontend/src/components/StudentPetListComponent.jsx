@@ -5,17 +5,28 @@ import {
   adoptPetForMe,
   returnPetForMe,
   getMyProfile,
+  getMyPendingAdoptionRequest,
 } from "../services/StudentPortalService";
 
 const StudentPetListComponent = () => {
   const [pets, setPets] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [pendingRequest, setPendingRequest] = useState(null);
   const [searchName, setSearchName] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
   const loadProfile = async () => {
     const response = await getMyProfile();
     setProfile(response.data);
+  };
+
+  const loadPendingRequest = async () => {
+    const response = await getMyPendingAdoptionRequest();
+    if (response.status === 204 || !response.data) {
+      setPendingRequest(null);
+      return;
+    }
+    setPendingRequest(response.data);
   };
 
   const loadPets = async () => {
@@ -26,6 +37,7 @@ const StudentPetListComponent = () => {
   useEffect(() => {
     loadPets();
     loadProfile();
+    loadPendingRequest();
   }, []);
 
   const searchPets = async (e) => {
@@ -48,7 +60,9 @@ const StudentPetListComponent = () => {
     loadPets();
   };
 
-  const handleAdopt = async (pet) => {
+  const hasPendingRequest = pendingRequest?.status === "PENDING";
+
+  const handleApply = async (pet) => {
     if (pet.adopted) {
       toast.error("宠物已经被领养");
       return;
@@ -57,13 +71,16 @@ const StudentPetListComponent = () => {
       toast.error("最多只能有一只宠物");
       return;
     }
+    if (hasPendingRequest) {
+      toast.error("您已有待审批的领养申请");
+      return;
+    }
     try {
       await adoptPetForMe(pet.id);
-      toast.success("领养成功!");
-      loadPets();
-      loadProfile();
+      toast.success("申请已提交，等待管理员审批");
+      loadPendingRequest();
     } catch (err) {
-      toast.error(err.response?.data?.message || "领养失败");
+      toast.error(err.response?.data?.message || "申请失败");
     }
   };
 
@@ -85,6 +102,11 @@ const StudentPetListComponent = () => {
   return (
     <div className="container mt-4">
       <h2 className="text-center mb-4">宠物领养</h2>
+      {hasPendingRequest && (
+        <div className="alert alert-warning">
+          审批中：{pendingRequest.petName}
+        </div>
+      )}
       {profile?.petId && (
         <div className="alert alert-info">
           当前宠物：{profile.petName}
@@ -149,10 +171,12 @@ const StudentPetListComponent = () => {
               <td>
                 <button
                   className="btn btn-outline-success"
-                  onClick={() => handleAdopt(item)}
-                  disabled={item.adopted || profile?.petId}
+                  onClick={() => handleApply(item)}
+                  disabled={
+                    item.adopted || profile?.petId || hasPendingRequest
+                  }
                 >
-                  Adopt
+                  申请领养
                 </button>
               </td>
             </tr>

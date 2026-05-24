@@ -24,6 +24,7 @@ import StudentPetListComponent from "./components/StudentPetListComponent";
 import DepartmentDashboardComponent from "./components/DepartmentDashboardComponent";
 import RegisterDepartmentComponent from "./components/RegisterDepartmentComponent";
 import RegisterStudentComponent from "./components/RegisterStudentComponent";
+import AdoptionApprovalComponent from "./components/AdoptionApprovalComponent";
 
 const AdminLayout = () => (
   <>
@@ -79,6 +80,10 @@ function App() {
             <Route
               path="/adoption-history"
               element={<ListAdoptionHistoryComponent />}
+            />
+            <Route
+              path="/adoption-requests"
+              element={<AdoptionApprovalComponent />}
             />
           </Route>
         </Route>

@@ -1,6 +1,7 @@
 package net.fernandosalas.ems.service.implementation;
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.DepartmentDto;
+import net.fernandosalas.ems.dto.PageResponse;
 import net.fernandosalas.ems.dto.StudentDto;
 import net.fernandosalas.ems.entity.Department;
 import net.fernandosalas.ems.entity.Student;
@@ -11,6 +12,9 @@ import net.fernandosalas.ems.repository.DepartmentRepository;
 import net.fernandosalas.ems.service.DepartmentService;
 import net.fernandosalas.ems.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +47,16 @@ public class DepartmentServiceImplementation implements DepartmentService {
         return departmentRepository.findAll()
                 .stream().map(DepartmentMapper::mapToDepartmentDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PageResponse<DepartmentDto> getDepartmentsPage(int page, int size) {
+        Page<Department> departmentPage = departmentRepository.findAll(
+                PageRequest.of(page, size, Sort.by("id").ascending()));
+        List<DepartmentDto> content = departmentPage.getContent().stream()
+                .map(DepartmentMapper::mapToDepartmentDto)
+                .collect(Collectors.toList());
+        return PageResponse.from(departmentPage, content);
     }
 
     @Override

@@ -2,6 +2,7 @@ package net.fernandosalas.ems.service.implementation;
 
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.AdoptionHistoryDto;
+import net.fernandosalas.ems.dto.AdoptionRequestDto;
 import net.fernandosalas.ems.dto.StudentProfileDto;
 import net.fernandosalas.ems.entity.Department;
 import net.fernandosalas.ems.entity.Pet;
@@ -12,7 +13,7 @@ import net.fernandosalas.ems.repository.StudentRepository;
 import net.fernandosalas.ems.security.SecurityUtils;
 import net.fernandosalas.ems.security.UserPrincipal;
 import net.fernandosalas.ems.service.AdoptionHistoryService;
-import net.fernandosalas.ems.service.PetService;
+import net.fernandosalas.ems.service.AdoptionRequestService;
 import net.fernandosalas.ems.service.StudentPortalService;
 import net.fernandosalas.ems.service.StudentService;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ import java.util.List;
 public class StudentPortalServiceImplementation implements StudentPortalService {
 
     private final StudentRepository studentRepository;
-    private final PetService petService;
+    private final AdoptionRequestService adoptionRequestService;
     private final StudentService studentService;
     private final AdoptionHistoryService adoptionHistoryService;
 
@@ -35,9 +36,13 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
     }
 
     @Override
-    public Pet adoptPetForCurrentStudent(Long petId) {
-        Long studentId = requireStudentId();
-        return petService.adoptPet(petId, studentId);
+    public AdoptionRequestDto applyForAdoptionForCurrentStudent(Long petId) {
+        return adoptionRequestService.applyForAdoption(requireStudentId(), petId);
+    }
+
+    @Override
+    public AdoptionRequestDto getCurrentStudentPendingRequest() {
+        return adoptionRequestService.getMyPendingRequest(requireStudentId());
     }
 
     @Override

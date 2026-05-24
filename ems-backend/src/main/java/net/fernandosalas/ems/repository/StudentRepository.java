@@ -1,5 +1,8 @@
 package net.fernandosalas.ems.repository;
 import net.fernandosalas.ems.entity.Student;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,4 +25,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByDepartmentIdWithDetails(@Param("departmentId") Long departmentId);
 
     Optional<Student> findByUserId(Long userId);
+
+    @EntityGraph(attributePaths = {"pet", "department"})
+    Page<Student> findAll(Pageable pageable);
 }

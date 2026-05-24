@@ -2,6 +2,7 @@ package net.fernandosalas.ems.service.implementation;
 
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.AdoptionHistoryDto;
+import net.fernandosalas.ems.dto.PageResponse;
 import net.fernandosalas.ems.entity.AdoptionHistory;
 import net.fernandosalas.ems.entity.Pet;
 import net.fernandosalas.ems.entity.Student;
@@ -9,6 +10,8 @@ import net.fernandosalas.ems.mapper.AdoptionHistoryMapper;
 import net.fernandosalas.ems.repository.AdoptionHistoryRepository;
 import net.fernandosalas.ems.service.AdoptionHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -46,6 +49,16 @@ public class AdoptionHistoryServiceImplementation implements AdoptionHistoryServ
                 .stream()
                 .map(AdoptionHistoryMapper::mapToAdoptionHistoryDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PageResponse<AdoptionHistoryDto> getHistoryPage(int page, int size) {
+        Page<AdoptionHistory> historyPage = adoptionHistoryRepository.findAllByOrderByAdoptedAtDesc(
+                PageRequest.of(page, size));
+        List<AdoptionHistoryDto> content = historyPage.getContent().stream()
+                .map(AdoptionHistoryMapper::mapToAdoptionHistoryDto)
+                .collect(Collectors.toList());
+        return PageResponse.from(historyPage, content);
     }
 
     @Override

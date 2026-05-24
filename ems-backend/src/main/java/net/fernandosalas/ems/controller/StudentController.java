@@ -25,9 +25,13 @@ public class StudentController {
        return new ResponseEntity<>(studentDto, HttpStatus.OK);
     }
     @GetMapping
-    public ResponseEntity<List<StudentDto>> getAllStudents() {
-       List<StudentDto> studentDtoList =  studentService.getAllStudents();
-       return new ResponseEntity<>(studentDtoList, HttpStatus.OK);
+    public ResponseEntity<?> getAllStudents(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(defaultValue = "10") int size) {
+        if (page == null) {
+            return new ResponseEntity<>(studentService.getAllStudents(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(studentService.getStudentsPage(page, size), HttpStatus.OK);
     }
 
     @PutMapping("{id}")

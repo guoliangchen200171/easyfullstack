@@ -1,5 +1,6 @@
 package net.fernandosalas.ems.service;
 import net.fernandosalas.ems.dto.DepartmentDto;
+import net.fernandosalas.ems.dto.PageResponse;
 import net.fernandosalas.ems.dto.StudentDto;
 import net.fernandosalas.ems.entity.Student;
 
@@ -12,6 +13,8 @@ public interface DepartmentService {
     DepartmentDto getDepartmentById(Long departmentId);
 
     List<DepartmentDto> getAllDepartments();
+
+    PageResponse<DepartmentDto> getDepartmentsPage(int page, int size);
 
     DepartmentDto updateDepartment(Long departmentId, DepartmentDto departmentDto);
 

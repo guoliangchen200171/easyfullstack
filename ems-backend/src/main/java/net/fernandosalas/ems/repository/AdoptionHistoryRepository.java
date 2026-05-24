@@ -1,6 +1,9 @@
 package net.fernandosalas.ems.repository;
 
 import net.fernandosalas.ems.entity.AdoptionHistory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,4 +19,7 @@ public interface AdoptionHistoryRepository extends JpaRepository<AdoptionHistory
     List<AdoptionHistory> findByStudentIdWithDetailsOrderByAdoptedAtDesc(Long studentId);
 
     Optional<AdoptionHistory> findFirstByStudentIdAndReturnedAtIsNullOrderByAdoptedAtDesc(Long studentId);
+
+    @EntityGraph(attributePaths = {"student", "pet"})
+    Page<AdoptionHistory> findAllByOrderByAdoptedAtDesc(Pageable pageable);
 }

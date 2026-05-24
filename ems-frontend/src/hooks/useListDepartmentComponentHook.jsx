@@ -1,23 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  listDepartments,
-  deleteDepartment,
-} from "../services/DepartmentService";
+import { listDepartmentsPage, deleteDepartment } from "../services/DepartmentService";
 import { toast } from "react-toastify";
+
+const PAGE_SIZE = 10;
 
 const useListDepartmentComponentHook = () => {
   const [departments, setDepartments] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const navigate = useNavigate();
 
-  const getDepartments = async () => {
+  const getDepartments = useCallback(async (pageToLoad = page) => {
     try {
-      const response = await listDepartments();
-      setDepartments(response.data);
+      const response = await listDepartmentsPage(pageToLoad, PAGE_SIZE);
+      const data = response.data;
+      if (data.content.length === 0 && pageToLoad > 0 && data.totalPages > 0) {
+        setPage(pageToLoad - 1);
+        return;
+      }
+      setDepartments(data.content);
+      setTotalPages(data.totalPages);
+      setTotalElements(data.totalElements);
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [page]);
 
   const updateDepartment = (id) => {
     navigate(`/edit-department/${id}`);
@@ -26,18 +35,25 @@ const useListDepartmentComponentHook = () => {
   const removeDepartment = async (id) => {
     await deleteDepartment(id);
     toast.error("Department deleted successfully!");
-    getDepartments();
+    getDepartments(page);
   };
 
   useEffect(() => {
-    getDepartments();
-  }, []);
+    getDepartments(page);
+  }, [page, getDepartments]);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
 
   return {
     departments,
-    getDepartments,
+    page,
+    totalPages,
+    totalElements,
     updateDepartment,
     removeDepartment,
+    handlePageChange,
   };
 };
 

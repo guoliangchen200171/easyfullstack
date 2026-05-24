@@ -1,9 +1,17 @@
 import ButtonLink from "./ButtonLink";
+import PaginationBar from "./PaginationBar";
 import useListDepartmentComponentHook from "../hooks/useListDepartmentComponentHook";
 
 const ListDepartmentComponent = () => {
-  const { departments, updateDepartment, removeDepartment } =
-    useListDepartmentComponentHook();
+  const {
+    departments,
+    page,
+    totalPages,
+    totalElements,
+    updateDepartment,
+    removeDepartment,
+    handlePageChange,
+  } = useListDepartmentComponentHook();
 
   return (
     <div className="container">
@@ -43,6 +51,12 @@ const ListDepartmentComponent = () => {
           })}
         </tbody>
       </table>
+      <PaginationBar
+        page={page}
+        totalPages={totalPages}
+        totalElements={totalElements}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

@@ -6,6 +6,10 @@ export const listStudents = () => {
   return api.get(REST_API_URL);
 };
 
+export const listStudentsPage = (page = 0, size = 10) => {
+  return api.get(`${REST_API_URL}?page=${page}&size=${size}`);
+};
+
 export const createStudent = (student) => {
   return api.post(REST_API_URL, student);
 };

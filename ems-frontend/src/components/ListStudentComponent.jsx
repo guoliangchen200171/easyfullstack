@@ -1,9 +1,21 @@
 import ButtonLink from "./ButtonLink";
+import PaginationBar from "./PaginationBar";
 import useListStudentComponentHook from "../hooks/useListStudentComponentHook";
 
 const ListStudentComponent = () => {
-  const { students, getDepartmentName, updateStudent, adoptPetForStudent, returnPetForStudent, deleteStudentById, resetReturnCountForStudent } =
-    useListStudentComponentHook();
+  const {
+    students,
+    page,
+    totalPages,
+    totalElements,
+    getDepartmentName,
+    updateStudent,
+    adoptPetForStudent,
+    returnPetForStudent,
+    deleteStudentById,
+    resetReturnCountForStudent,
+    handlePageChange,
+  } = useListStudentComponentHook();
 
   return (
     <div className="container">
@@ -73,6 +85,12 @@ const ListStudentComponent = () => {
           })}
         </tbody>
       </table>
+      <PaginationBar
+        page={page}
+        totalPages={totalPages}
+        totalElements={totalElements}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

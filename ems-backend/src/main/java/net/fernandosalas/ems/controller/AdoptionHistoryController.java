@@ -19,8 +19,13 @@ public class AdoptionHistoryController {
     private AdoptionHistoryService adoptionHistoryService;
 
     @GetMapping
-    public ResponseEntity<List<AdoptionHistoryDto>> getAllHistory() {
-        return new ResponseEntity<>(adoptionHistoryService.getAllHistory(), HttpStatus.OK);
+    public ResponseEntity<?> getAllHistory(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(defaultValue = "10") int size) {
+        if (page == null) {
+            return new ResponseEntity<>(adoptionHistoryService.getAllHistory(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(adoptionHistoryService.getHistoryPage(page, size), HttpStatus.OK);
     }
 
     @GetMapping("student/{studentId}")

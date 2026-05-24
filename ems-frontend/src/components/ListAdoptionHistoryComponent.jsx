@@ -1,8 +1,16 @@
 import ButtonLink from "./ButtonLink";
+import PaginationBar from "./PaginationBar";
 import useListAdoptionHistoryHook from "../hooks/useListAdoptionHistoryHook";
 
 const ListAdoptionHistoryComponent = () => {
-  const { history, formatDateTime } = useListAdoptionHistoryHook();
+  const {
+    history,
+    page,
+    totalPages,
+    totalElements,
+    formatDateTime,
+    handlePageChange,
+  } = useListAdoptionHistoryHook();
 
   return (
     <div className="container">
@@ -32,6 +40,12 @@ const ListAdoptionHistoryComponent = () => {
           ))}
         </tbody>
       </table>
+      <PaginationBar
+        page={page}
+        totalPages={totalPages}
+        totalElements={totalElements}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

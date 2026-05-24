@@ -30,9 +30,13 @@ public class DepartmentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DepartmentDto>> getAllDepartments() {
-        List<DepartmentDto> departmentDtoList = departmentService.getAllDepartments();
-        return new ResponseEntity<>(departmentDtoList, HttpStatus.OK);
+    public ResponseEntity<?> getAllDepartments(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(defaultValue = "10") int size) {
+        if (page == null) {
+            return new ResponseEntity<>(departmentService.getAllDepartments(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(departmentService.getDepartmentsPage(page, size), HttpStatus.OK);
     }
 
     @PutMapping("{id}")

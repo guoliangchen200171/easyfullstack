@@ -44,6 +44,11 @@ const HeaderComponent = () => {
                 </NavLink>
               </li>
               <li className="nav-item">
+                <NavLink className="nav-link" to="/adoption-requests">
+                  领养审批
+                </NavLink>
+              </li>
+              <li className="nav-item">
                 <NavLink className="nav-link" to="/adoption-history">
                   Adoption History
                 </NavLink>

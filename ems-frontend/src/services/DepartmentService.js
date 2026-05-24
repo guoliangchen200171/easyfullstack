@@ -6,6 +6,10 @@ export const listDepartments = () => {
   return api.get(REST_API_URL);
 };
 
+export const listDepartmentsPage = (page = 0, size = 10) => {
+  return api.get(`${REST_API_URL}?page=${page}&size=${size}`);
+};
+
 export const createDepartment = (department) => {
   return api.post(REST_API_URL, department);
 };

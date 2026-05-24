@@ -2,8 +2,8 @@ package net.fernandosalas.ems.controller;
 
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.AdoptionHistoryDto;
+import net.fernandosalas.ems.dto.AdoptionRequestDto;
 import net.fernandosalas.ems.dto.StudentProfileDto;
-import net.fernandosalas.ems.entity.Pet;
 import net.fernandosalas.ems.service.StudentPortalService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +23,19 @@ public class StudentPortalController {
         return ResponseEntity.ok(studentPortalService.getCurrentStudentProfile());
     }
 
+    @GetMapping("/adoption-request/pending")
+    public ResponseEntity<AdoptionRequestDto> getPendingAdoptionRequest() {
+        AdoptionRequestDto pending = studentPortalService.getCurrentStudentPendingRequest();
+        if (pending == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(pending);
+    }
+
     @PutMapping("/adopt-pet/{petId}")
-    public ResponseEntity<Pet> adoptPet(@PathVariable Long petId) {
-        Pet adoptedPet = studentPortalService.adoptPetForCurrentStudent(petId);
-        return new ResponseEntity<>(adoptedPet, HttpStatus.OK);
+    public ResponseEntity<AdoptionRequestDto> applyForAdoption(@PathVariable Long petId) {
+        AdoptionRequestDto request = studentPortalService.applyForAdoptionForCurrentStudent(petId);
+        return new ResponseEntity<>(request, HttpStatus.OK);
     }
 
     @PutMapping("/return-pet")

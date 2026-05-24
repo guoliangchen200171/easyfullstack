@@ -37,7 +37,9 @@ public class GlobalExceptionHandler {
             StudentAlreadyHasPetException.class,
             StudentHasNoPetException.class,
             PetAlreadyAdoptedException.class,
-            InvalidSearchParameterException.class
+            InvalidSearchParameterException.class,
+            PendingAdoptionRequestExistsException.class,
+            InvalidAdoptionRequestStateException.class
     })
     public ResponseEntity<Map<String, String>> handleBadRequest(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

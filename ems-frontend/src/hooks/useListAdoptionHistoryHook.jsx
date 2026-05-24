@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
-import { listAdoptionHistory } from "../services/AdoptionHistoryService";
+import { useState, useEffect, useCallback } from "react";
+import { listAdoptionHistoryPage } from "../services/AdoptionHistoryService";
+
+const PAGE_SIZE = 10;
 
 const formatDateTime = (value) => {
   if (!value) {
@@ -10,23 +12,37 @@ const formatDateTime = (value) => {
 
 const useListAdoptionHistoryHook = () => {
   const [history, setHistory] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async (pageToLoad = page) => {
     try {
-      const response = await listAdoptionHistory();
-      setHistory(response.data);
+      const response = await listAdoptionHistoryPage(pageToLoad, PAGE_SIZE);
+      const data = response.data;
+      setHistory(data.content);
+      setTotalPages(data.totalPages);
+      setTotalElements(data.totalElements);
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [page]);
 
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    fetchHistory(page);
+  }, [page, fetchHistory]);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
 
   return {
     history,
+    page,
+    totalPages,
+    totalElements,
     formatDateTime,
+    handlePageChange,
   };
 };
 
