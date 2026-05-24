@@ -18,7 +18,8 @@ public class StudentMapper {
                 student.getEmail(),
                 departmentId,
                 petId,
-                petName
+                petName,
+                student.getReturnCount()
         );
     }
 

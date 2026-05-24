@@ -17,16 +17,12 @@ public class UserPrincipal implements UserDetails {
     private final String username;
     private final String password;
     private final Role role;
-    private final Long studentId;
-    private final Long departmentId;
 
     public UserPrincipal(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.role = user.getRole();
-        this.studentId = user.getStudentId();
-        this.departmentId = user.getDepartmentId();
     }
 
     @Override

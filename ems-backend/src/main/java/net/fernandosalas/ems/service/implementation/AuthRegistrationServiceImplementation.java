@@ -5,6 +5,7 @@ import net.fernandosalas.ems.dto.DepartmentRegisterRequest;
 import net.fernandosalas.ems.dto.StudentRegisterRequest;
 import net.fernandosalas.ems.entity.Department;
 import net.fernandosalas.ems.entity.Student;
+import net.fernandosalas.ems.entity.User;
 import net.fernandosalas.ems.enums.Role;
 import net.fernandosalas.ems.exception.EmailAlreadyExistsException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
@@ -31,17 +32,16 @@ public class AuthRegistrationServiceImplementation implements AuthRegistrationSe
             throw new UsernameAlreadyExistsException("该用户名已被注册");
         }
 
+        User user = userService.createUser(
+                request.getUsername(),
+                request.getPassword(),
+                Role.DEPARTMENT);
+
         Department department = new Department();
         department.setDepartmentName(request.getDepartmentName());
         department.setDepartmentDescription(request.getDepartmentDescription());
-        Department savedDepartment = departmentRepository.save(department);
-
-        userService.createUser(
-                request.getUsername(),
-                request.getPassword(),
-                Role.DEPARTMENT,
-                null,
-                savedDepartment.getId());
+        department.setUser(user);
+        departmentRepository.save(department);
     }
 
     @Override
@@ -66,6 +66,8 @@ public class AuthRegistrationServiceImplementation implements AuthRegistrationSe
         student.setReturnCount(0);
         Student savedStudent = studentRepository.save(student);
 
-        userService.createStudentUser(savedStudent.getEmail(), savedStudent.getId());
+        User user = userService.createStudentUser(savedStudent.getEmail());
+        savedStudent.setUser(user);
+        studentRepository.save(savedStudent);
     }
 }

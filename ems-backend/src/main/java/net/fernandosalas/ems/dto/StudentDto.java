@@ -17,4 +17,5 @@ public class StudentDto {
     private Long departmentId;
     private Long petId;
     private String petName;
+    private int returnCount;
 }

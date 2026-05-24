@@ -42,6 +42,12 @@ public class StudentController {
         return new ResponseEntity<>(studentDto, HttpStatus.OK);
     }
 
+    @PutMapping("{id}/reset-return-count")
+    public ResponseEntity<StudentDto> resetReturnCount(@PathVariable("id") Long studentId) {
+        StudentDto studentDto = studentService.resetReturnCount(studentId);
+        return new ResponseEntity<>(studentDto, HttpStatus.OK);
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteStudent(@PathVariable("id") Long studentId) {
         studentService.deleteStudent(studentId);

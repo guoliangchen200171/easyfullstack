@@ -54,10 +54,12 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
 
     private Long requireStudentId() {
         UserPrincipal principal = SecurityUtils.getCurrentUser();
-        if (principal.getRole() != Role.STUDENT || principal.getStudentId() == null) {
+        if (principal.getRole() != Role.STUDENT) {
             throw new ResourceNotFoundException("当前用户不是学生账号");
         }
-        return principal.getStudentId();
+        return studentRepository.findByUserId(principal.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Student was not found for current user"))
+                .getId();
     }
 
     private Student getCurrentStudentEntity() {

@@ -2,7 +2,7 @@ import ButtonLink from "./ButtonLink";
 import useListStudentComponentHook from "../hooks/useListStudentComponentHook";
 
 const ListStudentComponent = () => {
-  const { students, getDepartmentName, updateStudent, adoptPetForStudent, returnPetForStudent, deleteStudentById } =
+  const { students, getDepartmentName, updateStudent, adoptPetForStudent, returnPetForStudent, deleteStudentById, resetReturnCountForStudent } =
     useListStudentComponentHook();
 
   return (
@@ -17,6 +17,7 @@ const ListStudentComponent = () => {
             <th scope="col">Email</th>
             <th scope="col">Department</th>
             <th scope="col">Pet</th>
+            <th scope="col">Return Count</th>
             {students.length > 0 && <th scope="col">Action</th>}
           </tr>
         </thead>
@@ -29,6 +30,7 @@ const ListStudentComponent = () => {
                 <td>{item.email}</td>
                 <td>{getDepartmentName(item.departmentId)}</td>
                 <td>{item.petName || "No pet"}</td>
+                <td>{item.returnCount ?? 0}</td>
                 {students.length > 0 && (
                   <td>
                     {item.petId ? (
@@ -51,6 +53,12 @@ const ListStudentComponent = () => {
                       onClick={() => updateStudent(item.id)}
                     >
                       Update
+                    </button>
+                    <button
+                      className="btn btn-outline-secondary me-2"
+                      onClick={() => resetReturnCountForStudent(item)}
+                    >
+                      Reset Return Count
                     </button>
                     <button
                       className="btn btn-outline-danger"

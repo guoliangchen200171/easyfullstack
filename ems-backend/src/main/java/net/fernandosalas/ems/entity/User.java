@@ -28,10 +28,4 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
-
-    @Column(name = "student_id")
-    private Long studentId;
-
-    @Column(name = "department_id")
-    private Long departmentId;
 }

@@ -19,7 +19,7 @@ public class UserServiceImplementation implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User createUser(String username, String rawPassword, Role role, Long studentId, Long departmentId) {
+    public User createUser(String username, String rawPassword, Role role) {
         if (userRepository.existsByUsername(username)) {
             throw new UsernameAlreadyExistsException("该用户名已被注册");
         }
@@ -27,18 +27,21 @@ public class UserServiceImplementation implements UserService {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(rawPassword));
         user.setRole(role);
-        user.setStudentId(studentId);
-        user.setDepartmentId(departmentId);
         return userRepository.save(user);
     }
 
     @Override
-    public void createStudentUser(String email, Long studentId) {
-        createUser(email, DEFAULT_STUDENT_PASSWORD, Role.STUDENT, studentId, null);
+    public User createStudentUser(String email) {
+        return createUser(email, DEFAULT_STUDENT_PASSWORD, Role.STUDENT);
     }
 
     @Override
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public void deleteById(Long userId) {
+        userRepository.deleteById(userId);
     }
 }

@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.DepartmentRegisterRequest;
 import net.fernandosalas.ems.dto.LoginRequest;
 import net.fernandosalas.ems.dto.StudentRegisterRequest;
-import net.fernandosalas.ems.enums.Role;
 import net.fernandosalas.ems.security.UserPrincipal;
 import net.fernandosalas.ems.service.AuthRegistrationService;
 import org.springframework.http.HttpStatus;
@@ -98,14 +97,7 @@ public class AuthController {
             body.put("message", message);
         }
         if (authentication.getPrincipal() instanceof UserPrincipal principal) {
-            Role role = principal.getRole();
-            body.put("role", role.name());
-            if (principal.getStudentId() != null) {
-                body.put("studentId", principal.getStudentId());
-            }
-            if (principal.getDepartmentId() != null) {
-                body.put("departmentId", principal.getDepartmentId());
-            }
+            body.put("role", principal.getRole().name());
         }
         return body;
     }

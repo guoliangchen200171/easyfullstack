@@ -4,6 +4,7 @@ import net.fernandosalas.ems.dto.StudentDto;
 import net.fernandosalas.ems.entity.Department;
 import net.fernandosalas.ems.entity.Pet;
 import net.fernandosalas.ems.entity.Student;
+import net.fernandosalas.ems.entity.User;
 import net.fernandosalas.ems.exception.EmailAlreadyExistsException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
 import net.fernandosalas.ems.exception.StudentHasNoPetException;
@@ -46,8 +47,10 @@ public class StudentServiceImplementation implements StudentService {
                                     + studentDto.getDepartmentId()));
         student.setDepartment(department);
         student.setReturnCount(0);
-        Student savedStudent =  studentRepository.save(student);
-        userService.createStudentUser(savedStudent.getEmail(), savedStudent.getId());
+        Student savedStudent = studentRepository.save(student);
+        User user = userService.createStudentUser(savedStudent.getEmail());
+        savedStudent.setUser(user);
+        studentRepository.save(savedStudent);
         return StudentMapper.mapToStudentDto(savedStudent);
     }
 
@@ -95,7 +98,11 @@ public class StudentServiceImplementation implements StudentService {
         if (student.getPet() != null) {
             petService.returnPet(student.getPet().getId(), false);
         }
+        User linkedUser = student.getUser();
         studentRepository.deleteById(studentId);
+        if (linkedUser != null) {
+            userService.deleteById(linkedUser.getId());
+        }
     }
 
     @Override
@@ -111,5 +118,15 @@ public class StudentServiceImplementation implements StudentService {
         petService.returnPet(pet.getId(), true);
 
         return StudentMapper.mapToStudentDto(studentRepository.findByIdWithDetails(studentId).orElseThrow());
+    }
+
+    @Override
+    public StudentDto resetReturnCount(Long studentId) {
+        Student student = studentRepository.findByIdWithDetails(studentId).orElseThrow(() ->
+                new ResourceNotFoundException("Student was not found with given id: " + studentId));
+        student.setReturnCount(0);
+        Student savedStudent = studentRepository.save(student);
+        return StudentMapper.mapToStudentDto(
+                studentRepository.findByIdWithDetails(savedStudent.getId()).orElseThrow());
     }
 }

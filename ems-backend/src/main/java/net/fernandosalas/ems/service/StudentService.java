@@ -9,4 +9,5 @@ public interface StudentService {
     StudentDto updateStudent(Long studentId, StudentDto studentDto);
     void deleteStudent(Long studentId);
     StudentDto returnPet(Long studentId);
+    StudentDto resetReturnCount(Long studentId);
 }

@@ -24,6 +24,10 @@ public class Department {
     @Column(name = "department_description")
     private String departmentDescription;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", unique = true)
+    private User user;
+
     // 双向关联：一个部门对应多个学生
     @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
     private List<Student> students;

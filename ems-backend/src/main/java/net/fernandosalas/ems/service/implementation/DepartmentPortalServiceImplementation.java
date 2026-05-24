@@ -56,9 +56,11 @@ public class DepartmentPortalServiceImplementation implements DepartmentPortalSe
 
     private Long requireDepartmentId() {
         UserPrincipal principal = SecurityUtils.getCurrentUser();
-        if (principal.getRole() != Role.DEPARTMENT || principal.getDepartmentId() == null) {
+        if (principal.getRole() != Role.DEPARTMENT) {
             throw new ResourceNotFoundException("当前用户不是部门账号");
         }
-        return principal.getDepartmentId();
+        return departmentRepository.findByUserId(principal.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Department was not found for current user"))
+                .getId();
     }
 }

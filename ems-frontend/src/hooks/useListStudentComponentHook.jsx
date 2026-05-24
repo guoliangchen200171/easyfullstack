@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { listStudents, deleteStudent, returnPet } from "../services/StudentService";
+import { listStudents, deleteStudent, returnPet, resetReturnCount } from "../services/StudentService";
 import { listDepartments } from "../services/DepartmentService";
 
 const useListStudentComponentHook = () => {
@@ -66,6 +66,20 @@ const useListStudentComponentHook = () => {
     fetchStudents();
   };
 
+  const resetReturnCountForStudent = async (student) => {
+    if ((student.returnCount ?? 0) === 0) {
+      toast.info("该学生归还次数已为 0");
+      return;
+    }
+    try {
+      await resetReturnCount(student.id);
+      toast.success("归还次数已重置");
+      fetchStudents();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "重置失败");
+    }
+  };
+
   return {
     students,
     departments,
@@ -76,6 +90,7 @@ const useListStudentComponentHook = () => {
     adoptPetForStudent,
     returnPetForStudent,
     deleteStudentById,
+    resetReturnCountForStudent,
   };
 };
 

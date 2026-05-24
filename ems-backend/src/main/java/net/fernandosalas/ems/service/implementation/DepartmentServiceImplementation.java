@@ -4,10 +4,12 @@ import net.fernandosalas.ems.dto.DepartmentDto;
 import net.fernandosalas.ems.dto.StudentDto;
 import net.fernandosalas.ems.entity.Department;
 import net.fernandosalas.ems.entity.Student;
+import net.fernandosalas.ems.entity.User;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
 import net.fernandosalas.ems.mapper.DepartmentMapper;
 import net.fernandosalas.ems.repository.DepartmentRepository;
 import net.fernandosalas.ems.service.DepartmentService;
+import net.fernandosalas.ems.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -19,6 +21,9 @@ public class DepartmentServiceImplementation implements DepartmentService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private UserService userService;
     @Override
     public DepartmentDto createDepartment(DepartmentDto departmentDto) {
         Department department = DepartmentMapper.mapToDepartment(departmentDto);
@@ -54,7 +59,11 @@ public class DepartmentServiceImplementation implements DepartmentService {
     public void deleteDepartment(Long departmentId) {
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(()-> new ResourceNotFoundException("Department was not found with id: " + departmentId));
+        User linkedUser = department.getUser();
         departmentRepository.deleteById(departmentId);
+        if (linkedUser != null) {
+            userService.deleteById(linkedUser.getId());
+        }
     }
 
     @Override

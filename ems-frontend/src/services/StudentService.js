@@ -25,3 +25,7 @@ export const updateStudent = (id, student) => {
 export const returnPet = (studentId) => {
   return api.put(`${REST_API_URL}/${studentId}/return-pet`);
 };
+
+export const resetReturnCount = (studentId) => {
+  return api.put(`${REST_API_URL}/${studentId}/reset-return-count`);
+};

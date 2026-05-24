@@ -28,6 +28,11 @@ public class Student {
     @Column(name = "return_count", nullable = false)
     private int returnCount = 0;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", unique = true)
+    @JsonIgnore
+    private User user;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     @JsonIgnore
