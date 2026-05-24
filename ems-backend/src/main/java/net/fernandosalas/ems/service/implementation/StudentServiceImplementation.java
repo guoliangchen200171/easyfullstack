@@ -12,6 +12,7 @@ import net.fernandosalas.ems.repository.DepartmentRepository;
 import net.fernandosalas.ems.repository.StudentRepository;
 import net.fernandosalas.ems.service.PetService;
 import net.fernandosalas.ems.service.StudentService;
+import net.fernandosalas.ems.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,9 @@ public class StudentServiceImplementation implements StudentService {
 
     @Autowired
     private PetService petService;
+
+    @Autowired
+    private UserService userService;
     @Override
     public StudentDto createStudent(StudentDto studentDto) {
         if (studentRepository.existsByEmail(studentDto.getEmail())) {
@@ -43,6 +47,7 @@ public class StudentServiceImplementation implements StudentService {
         student.setDepartment(department);
         student.setReturnCount(0);
         Student savedStudent =  studentRepository.save(student);
+        userService.createStudentUser(savedStudent.getEmail(), savedStudent.getId());
         return StudentMapper.mapToStudentDto(savedStudent);
     }
 

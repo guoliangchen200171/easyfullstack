@@ -6,6 +6,10 @@ export const listPets = () => {
   return api.get(REST_API_URL);
 };
 
+export const searchPetsByName = (name) => {
+  return api.get(`${REST_API_URL}/search`, { params: { name } });
+};
+
 export const createPet = (pet) => {
   return api.post(REST_API_URL, pet);
 };

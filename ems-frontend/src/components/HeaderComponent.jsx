@@ -1,9 +1,11 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { logout } from "../services/AuthService";
+import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 
 const HeaderComponent = () => {
   const navigate = useNavigate();
+  const { clearAuth } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -12,6 +14,7 @@ const HeaderComponent = () => {
     } catch {
       toast.info("已退出登录");
     } finally {
+      clearAuth();
       navigate("/login");
     }
   };
@@ -43,11 +46,6 @@ const HeaderComponent = () => {
               <li className="nav-item">
                 <NavLink className="nav-link" to="/adoption-history">
                   Adoption History
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/view-department">
-                  查询部门
                 </NavLink>
               </li>
             </ul>

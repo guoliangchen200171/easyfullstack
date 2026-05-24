@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PetRepository extends JpaRepository<Pet, Long> {
@@ -14,4 +15,6 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
 
     @Query("SELECT p FROM Pet p WHERE p.student.id = :studentId")
     Optional<Pet> findByStudentId(@Param("studentId") Long studentId);
+
+    List<Pet> findByNameContainingIgnoreCase(String name);
 }

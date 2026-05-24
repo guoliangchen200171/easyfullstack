@@ -4,6 +4,9 @@ import useListPetComponentHook from "../hooks/useListPetComponentHook";
 const ListPetComponent = () => {
   const {
     pets,
+    searchName,
+    setSearchName,
+    isSearching,
     adoptStudent,
     isAdoptMode,
     editPet,
@@ -11,6 +14,8 @@ const ListPetComponent = () => {
     adoptPetForStudent,
     cancelAdopt,
     returnPet,
+    searchPets,
+    resetSearch,
   } = useListPetComponentHook();
 
   return (
@@ -28,6 +33,37 @@ const ListPetComponent = () => {
         </div>
       )}
       {!isAdoptMode && <ButtonLink text="Add Pet" toAction="/add-pet" />}
+      <form className="row g-2 align-items-end mb-3" onSubmit={searchPets}>
+        <div className="col-md-6">
+          <label htmlFor="petSearchName" className="form-label">
+            按名称查询
+          </label>
+          <input
+            id="petSearchName"
+            type="text"
+            className="form-control"
+            placeholder="请输入宠物名称"
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+          />
+        </div>
+        <div className="col-auto">
+          <button type="submit" className="btn btn-outline-primary">
+            查询
+          </button>
+        </div>
+        {isSearching && (
+          <div className="col-auto">
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={resetSearch}
+            >
+              重置
+            </button>
+          </div>
+        )}
+      </form>
       <table className="table table-striped">
         <thead>
           <tr>

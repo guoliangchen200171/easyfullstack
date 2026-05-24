@@ -12,6 +12,8 @@ public interface PetService {
 
     List<Pet> getAllPets();
 
+    List<Pet> searchPetsByName(String name);
+
     Pet updatePet(Long petId, Pet pet);
 
     Pet adoptPet(Long petId, Long studentId);

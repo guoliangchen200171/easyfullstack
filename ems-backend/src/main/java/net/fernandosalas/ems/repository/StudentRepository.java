@@ -17,4 +17,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query("SELECT s FROM Student s LEFT JOIN FETCH s.pet LEFT JOIN FETCH s.department WHERE s.id = :id")
     Optional<Student> findByIdWithDetails(@Param("id") Long id);
+
+    @Query("SELECT s FROM Student s LEFT JOIN FETCH s.pet LEFT JOIN FETCH s.department WHERE s.department.id = :departmentId")
+    List<Student> findByDepartmentIdWithDetails(@Param("departmentId") Long departmentId);
 }

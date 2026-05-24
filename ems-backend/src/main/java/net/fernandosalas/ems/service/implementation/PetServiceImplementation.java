@@ -3,6 +3,7 @@ package net.fernandosalas.ems.service.implementation;
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.entity.Pet;
 import net.fernandosalas.ems.entity.Student;
+import net.fernandosalas.ems.exception.InvalidSearchParameterException;
 import net.fernandosalas.ems.exception.PetAlreadyAdoptedException;
 import net.fernandosalas.ems.exception.PetNotAdoptedException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
@@ -48,6 +49,14 @@ public class PetServiceImplementation implements PetService {
     @Override
     public List<Pet> getAllPets() {
         return petRepository.findAll();
+    }
+
+    @Override
+    public List<Pet> searchPetsByName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new InvalidSearchParameterException("请输入宠物名称");
+        }
+        return petRepository.findByNameContainingIgnoreCase(name.trim());
     }
 
     @Override

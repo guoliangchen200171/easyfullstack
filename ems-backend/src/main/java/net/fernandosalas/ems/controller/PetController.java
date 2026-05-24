@@ -24,6 +24,12 @@ public class PetController {
         return new ResponseEntity<>(newPet, HttpStatus.CREATED);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Pet>> searchPetsByName(@RequestParam("name") String name) {
+        List<Pet> pets = petService.searchPetsByName(name);
+        return new ResponseEntity<>(pets, HttpStatus.OK);
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<Pet> getPetById(@PathVariable("id") Long petId) {
         Pet pet = petService.getPetById(petId);

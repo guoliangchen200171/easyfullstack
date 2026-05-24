@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { listPets, deletePet, adoptPet, returnPetById } from "../services/PetService";
+import { listPets, deletePet, adoptPet, returnPetById, searchPetsByName as searchPetsByNameApi } from "../services/PetService";
 import { getStudentById } from "../services/StudentService";
 import { toast } from "react-toastify";
 
 const useListPetComponentHook = () => {
   const [pets, setPets] = useState([]);
+  const [searchName, setSearchName] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [adoptStudent, setAdoptStudent] = useState(null);
   const [searchParams] = useSearchParams();
   const studentId = searchParams.get("studentId");
@@ -51,7 +53,11 @@ const useListPetComponentHook = () => {
   const removePet = async (id) => {
     await deletePet(id);
     toast.error("Pet deleted successfully!");
-    getPets();
+    if (isSearching) {
+      searchPets();
+    } else {
+      getPets();
+    }
   };
 
   const adoptPetForStudent = async (pet) => {
@@ -85,15 +91,47 @@ const useListPetComponentHook = () => {
     try {
       await returnPetById(pet.id);
       toast.success("归还成功!");
-      getPets();
+      if (isSearching) {
+        searchPets();
+      } else {
+        getPets();
+      }
     } catch (err) {
       const message = err.response?.data?.message || "归还失败";
       toast.error(message);
     }
   };
 
+  const searchPets = async (e) => {
+    e?.preventDefault();
+    if (!searchName.trim()) {
+      toast.error("请输入宠物名称");
+      return;
+    }
+    try {
+      const response = await searchPetsByNameApi(searchName.trim());
+      setPets(response.data);
+      setIsSearching(true);
+      if (response.data.length === 0) {
+        toast.info("未找到匹配的宠物");
+      }
+    } catch (err) {
+      const message = err.response?.data?.message || "查询失败";
+      toast.error(message);
+    }
+  };
+
+  const resetSearch = () => {
+    setSearchName("");
+    setIsSearching(false);
+    getPets();
+  };
+
   return {
     pets,
+    searchName,
+    setSearchName,
+    isSearching,
     adoptStudent,
     isAdoptMode: Boolean(studentId),
     getPets,
@@ -102,6 +140,8 @@ const useListPetComponentHook = () => {
     adoptPetForStudent,
     cancelAdopt,
     returnPet,
+    searchPets,
+    resetSearch,
   };
 };
 
