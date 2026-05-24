@@ -21,6 +21,7 @@ import LoginComponent from "./components/LoginComponent";
 import RoleRoute from "./components/RoleRoute";
 import StudentProfileComponent from "./components/StudentProfileComponent";
 import StudentPetListComponent from "./components/StudentPetListComponent";
+import StudentProductPurchaseComponent from "./components/StudentProductPurchaseComponent";
 import DepartmentDashboardComponent from "./components/DepartmentDashboardComponent";
 import RegisterDepartmentComponent from "./components/RegisterDepartmentComponent";
 import RegisterStudentComponent from "./components/RegisterStudentComponent";
@@ -101,6 +102,10 @@ function App() {
               element={<StudentProfileComponent />}
             />
             <Route path="/student/pets" element={<StudentPetListComponent />} />
+            <Route
+              path="/student/products"
+              element={<StudentProductPurchaseComponent />}
+            />
           </Route>
         </Route>
 

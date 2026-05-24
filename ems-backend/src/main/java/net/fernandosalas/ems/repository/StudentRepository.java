@@ -27,5 +27,8 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     Optional<Student> findByUserId(Long userId);
 
     @EntityGraph(attributePaths = {"pet", "department"})
+    Optional<Student> findByEmail(String email);
+
+    @EntityGraph(attributePaths = {"pet", "department"})
     Page<Student> findAll(Pageable pageable);
 }

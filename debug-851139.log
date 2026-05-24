@@ -1,3 +1,0 @@
-{"sessionId":"851139","location":"AuthController.java:registerDepartment","message":"register dept request","data":{"departmentName":"DebugDept","username":"admin"},"timestamp":1779607712120,"hypothesisId":"H5"}
-{"sessionId":"851139","location":"AuthRegistrationServiceImplementation.java:registerDepartment","message":"username check","data":{"username":"admin","exists":true},"timestamp":1779607712126,"hypothesisId":"H1"}
-{"sessionId":"851139","location":"AuthController.java:registerDepartment","message":"register dept exception","data":{"exceptionType":"UsernameAlreadyExistsException","exceptionMessage":"该用户名已被注册"},"timestamp":1779607712128,"hypothesisId":"H1,H4"}

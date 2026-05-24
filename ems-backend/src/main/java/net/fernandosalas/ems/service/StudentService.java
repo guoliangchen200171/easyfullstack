@@ -12,4 +12,5 @@ public interface StudentService {
     void deleteStudent(Long studentId);
     StudentDto returnPet(Long studentId);
     StudentDto resetReturnCount(Long studentId);
+    StudentDto addDeposit(String email, java.math.BigDecimal amount);
 }

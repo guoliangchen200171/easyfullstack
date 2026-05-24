@@ -103,8 +103,8 @@ public class ProductServiceImplementation implements ProductService {
     }
 
     private void validatePrice(BigDecimal price) {
-        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidSearchParameterException("价格不能为负数");
+        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidSearchParameterException("价格必须大于 0");
         }
     }
 

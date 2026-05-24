@@ -58,8 +58,8 @@ const useProductManagementHook = () => {
       return;
     }
     const priceValue = Number(price);
-    if (Number.isNaN(priceValue) || priceValue < 0) {
-      toast.error("价格不能为负数");
+    if (Number.isNaN(priceValue) || priceValue <= 0) {
+      toast.error("价格必须大于 0");
       return;
     }
     if (stock < 0) {
@@ -148,8 +148,8 @@ const useProductManagementHook = () => {
       return;
     }
     const priceValue = Number(editDraft.price);
-    if (Number.isNaN(priceValue) || priceValue < 0) {
-      toast.error("价格不能为负数");
+    if (Number.isNaN(priceValue) || priceValue <= 0) {
+      toast.error("价格必须大于 0");
       return;
     }
     try {

@@ -11,14 +11,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentDto {
-    private Long id;
-    private String firstName;
-    private String lastName;
+public class DepositAmountRequest {
     private String email;
-    private Long departmentId;
-    private Long petId;
-    private String petName;
-    private int returnCount;
-    private BigDecimal deposit;
+    private BigDecimal amount;
 }

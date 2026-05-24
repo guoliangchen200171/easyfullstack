@@ -3,12 +3,16 @@ package net.fernandosalas.ems.service.implementation;
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.AdoptionHistoryDto;
 import net.fernandosalas.ems.dto.AdoptionRequestDto;
+import net.fernandosalas.ems.dto.PurchaseResultDto;
 import net.fernandosalas.ems.dto.StudentProfileDto;
 import net.fernandosalas.ems.entity.Department;
 import net.fernandosalas.ems.entity.Pet;
+import net.fernandosalas.ems.entity.Product;
 import net.fernandosalas.ems.entity.Student;
 import net.fernandosalas.ems.enums.Role;
+import net.fernandosalas.ems.exception.InvalidSearchParameterException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
+import net.fernandosalas.ems.repository.ProductRepository;
 import net.fernandosalas.ems.repository.StudentRepository;
 import net.fernandosalas.ems.security.SecurityUtils;
 import net.fernandosalas.ems.security.UserPrincipal;
@@ -17,7 +21,9 @@ import net.fernandosalas.ems.service.AdoptionRequestService;
 import net.fernandosalas.ems.service.StudentPortalService;
 import net.fernandosalas.ems.service.StudentService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -25,6 +31,7 @@ import java.util.List;
 public class StudentPortalServiceImplementation implements StudentPortalService {
 
     private final StudentRepository studentRepository;
+    private final ProductRepository productRepository;
     private final AdoptionRequestService adoptionRequestService;
     private final StudentService studentService;
     private final AdoptionHistoryService adoptionHistoryService;
@@ -57,6 +64,50 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
         return adoptionHistoryService.getHistoryByStudentId(requireStudentId());
     }
 
+    @Override
+    public List<Product> listProductsForCurrentStudent() {
+        return productRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public PurchaseResultDto purchaseProductForCurrentStudent(Long productId, int quantity) {
+        if (quantity <= 0) {
+            throw new InvalidSearchParameterException("购买数量必须大于 0");
+        }
+        Student student = getCurrentStudentEntity();
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Product was not found with id: " + productId));
+
+        BigDecimal price = product.getPrice() != null ? product.getPrice() : BigDecimal.ZERO;
+        BigDecimal totalCost = price.multiply(BigDecimal.valueOf(quantity));
+        BigDecimal deposit = student.getDeposit() != null ? student.getDeposit() : BigDecimal.ZERO;
+
+        if (price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidSearchParameterException("商品价格必须大于 0，请联系管理员设置价格");
+        }
+
+        if (deposit.compareTo(totalCost) < 0) {
+            throw new InvalidSearchParameterException("存款余额不足");
+        }
+        if (product.getStock() < quantity) {
+            throw new InvalidSearchParameterException("库存不足");
+        }
+
+        student.setDeposit(deposit.subtract(totalCost));
+        product.setStock(product.getStock() - quantity);
+        studentRepository.save(student);
+        productRepository.save(product);
+
+        return new PurchaseResultDto(
+                product.getId(),
+                quantity,
+                totalCost,
+                student.getDeposit(),
+                product.getStock());
+    }
+
     private Long requireStudentId() {
         UserPrincipal principal = SecurityUtils.getCurrentUser();
         if (principal.getRole() != Role.STUDENT) {
@@ -84,6 +135,7 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
                 department != null ? department.getDepartmentName() : null,
                 pet != null ? pet.getId() : null,
                 pet != null ? pet.getName() : null,
-                student.getReturnCount());
+                student.getReturnCount(),
+                student.getDeposit());
     }
 }

@@ -3,7 +3,10 @@ package net.fernandosalas.ems.controller;
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.AdoptionHistoryDto;
 import net.fernandosalas.ems.dto.AdoptionRequestDto;
+import net.fernandosalas.ems.dto.PurchaseQuantityRequest;
+import net.fernandosalas.ems.dto.PurchaseResultDto;
 import net.fernandosalas.ems.dto.StudentProfileDto;
+import net.fernandosalas.ems.entity.Product;
 import net.fernandosalas.ems.service.StudentPortalService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +49,19 @@ public class StudentPortalController {
     @GetMapping("/history")
     public ResponseEntity<List<AdoptionHistoryDto>> getHistory() {
         return ResponseEntity.ok(studentPortalService.getCurrentStudentHistory());
+    }
+
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> listProducts() {
+        return ResponseEntity.ok(studentPortalService.listProductsForCurrentStudent());
+    }
+
+    @PostMapping("/products/{productId}/purchase")
+    public ResponseEntity<PurchaseResultDto> purchaseProduct(
+            @PathVariable Long productId,
+            @RequestBody PurchaseQuantityRequest request) {
+        PurchaseResultDto result = studentPortalService.purchaseProductForCurrentStudent(
+                productId, request.getQuantity());
+        return ResponseEntity.ok(result);
     }
 }

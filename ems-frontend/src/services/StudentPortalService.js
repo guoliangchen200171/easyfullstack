@@ -11,3 +11,8 @@ export const getMyPendingAdoptionRequest = () =>
 export const returnPetForMe = () => api.put("/api/students/me/return-pet");
 
 export const getMyHistory = () => api.get("/api/students/me/history");
+
+export const listProductsForMe = () => api.get("/api/students/me/products");
+
+export const purchaseProductForMe = (productId, quantity) =>
+  api.post(`/api/students/me/products/${productId}/purchase`, { quantity });

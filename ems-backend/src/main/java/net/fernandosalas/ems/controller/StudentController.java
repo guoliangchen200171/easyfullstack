@@ -1,5 +1,6 @@
 package net.fernandosalas.ems.controller;
 import lombok.AllArgsConstructor;
+import net.fernandosalas.ems.dto.DepositAmountRequest;
 import net.fernandosalas.ems.dto.StudentDto;
 import net.fernandosalas.ems.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,12 @@ public class StudentController {
     @PutMapping("{studentId}/return-pet")
     public ResponseEntity<StudentDto> returnPet(@PathVariable("studentId") Long studentId) {
         StudentDto studentDto = studentService.returnPet(studentId);
+        return new ResponseEntity<>(studentDto, HttpStatus.OK);
+    }
+
+    @PutMapping("deposit/add")
+    public ResponseEntity<StudentDto> addDeposit(@RequestBody DepositAmountRequest request) {
+        StudentDto studentDto = studentService.addDeposit(request.getEmail(), request.getAmount());
         return new ResponseEntity<>(studentDto, HttpStatus.OK);
     }
 

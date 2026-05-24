@@ -6,6 +6,7 @@ import {
   deleteStudent,
   returnPet,
   resetReturnCount,
+  addStudentDeposit,
 } from "../services/StudentService";
 import { listDepartments } from "../services/DepartmentService";
 
@@ -17,6 +18,8 @@ const useListStudentComponentHook = () => {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
+  const [depositEmail, setDepositEmail] = useState("");
+  const [depositAmount, setDepositAmount] = useState("");
   const navigate = useNavigate();
 
   const fetchStudents = useCallback(async (pageToLoad = page) => {
@@ -104,17 +107,50 @@ const useListStudentComponentHook = () => {
     setPage(newPage);
   };
 
+  const parseDepositInputs = () => {
+    const email = depositEmail.trim();
+    const amount = Number(depositAmount);
+    if (!email) {
+      toast.error("请输入学生邮箱");
+      return null;
+    }
+    if (Number.isNaN(amount) || amount <= 0) {
+      toast.error("金额必须大于 0");
+      return null;
+    }
+    return { email, amount };
+  };
+
+  const handleAddDeposit = async () => {
+    const inputs = parseDepositInputs();
+    if (!inputs) {
+      return;
+    }
+    try {
+      await addStudentDeposit(inputs.email, inputs.amount);
+      toast.success("存款已增加");
+      fetchStudents(page);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "加存款失败");
+    }
+  };
+
   return {
     students,
     page,
     totalPages,
     totalElements,
+    depositEmail,
+    setDepositEmail,
+    depositAmount,
+    setDepositAmount,
     getDepartmentName,
     updateStudent,
     adoptPetForStudent,
     returnPetForStudent,
     deleteStudentById,
     resetReturnCountForStudent,
+    handleAddDeposit,
     handlePageChange,
   };
 };

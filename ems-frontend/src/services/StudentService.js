@@ -33,3 +33,7 @@ export const returnPet = (studentId) => {
 export const resetReturnCount = (studentId) => {
   return api.put(`${REST_API_URL}/${studentId}/reset-return-count`);
 };
+
+export const addStudentDeposit = (email, amount) => {
+  return api.put(`${REST_API_URL}/deposit/add`, { email, amount });
+};

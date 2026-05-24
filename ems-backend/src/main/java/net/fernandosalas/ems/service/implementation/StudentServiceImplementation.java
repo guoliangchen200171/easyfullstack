@@ -7,6 +7,7 @@ import net.fernandosalas.ems.entity.Pet;
 import net.fernandosalas.ems.entity.Student;
 import net.fernandosalas.ems.entity.User;
 import net.fernandosalas.ems.exception.EmailAlreadyExistsException;
+import net.fernandosalas.ems.exception.InvalidSearchParameterException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
 import net.fernandosalas.ems.exception.StudentHasNoPetException;
 import net.fernandosalas.ems.mapper.StudentMapper;
@@ -20,7 +21,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +54,7 @@ public class StudentServiceImplementation implements StudentService {
                                     + studentDto.getDepartmentId()));
         student.setDepartment(department);
         student.setReturnCount(0);
+        student.setDeposit(BigDecimal.ZERO);
         Student savedStudent = studentRepository.save(student);
         User user = userService.createStudentUser(savedStudent.getEmail());
         savedStudent.setUser(user);
@@ -139,6 +143,25 @@ public class StudentServiceImplementation implements StudentService {
         Student student = studentRepository.findByIdWithDetails(studentId).orElseThrow(() ->
                 new ResourceNotFoundException("Student was not found with given id: " + studentId));
         student.setReturnCount(0);
+        Student savedStudent = studentRepository.save(student);
+        return StudentMapper.mapToStudentDto(
+                studentRepository.findByIdWithDetails(savedStudent.getId()).orElseThrow());
+    }
+
+    @Override
+    @Transactional
+    public StudentDto addDeposit(String email, BigDecimal amount) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new InvalidSearchParameterException("邮箱不能为空");
+        }
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidSearchParameterException("存款金额必须大于 0");
+        }
+        String normalizedEmail = email.trim();
+        Student student = studentRepository.findByEmail(normalizedEmail).orElseThrow(() ->
+                new ResourceNotFoundException("未找到该邮箱对应的学生: " + normalizedEmail));
+        BigDecimal currentDeposit = student.getDeposit() != null ? student.getDeposit() : BigDecimal.ZERO;
+        student.setDeposit(currentDeposit.add(amount));
         Student savedStudent = studentRepository.save(student);
         return StudentMapper.mapToStudentDto(
                 studentRepository.findByIdWithDetails(savedStudent.getId()).orElseThrow());

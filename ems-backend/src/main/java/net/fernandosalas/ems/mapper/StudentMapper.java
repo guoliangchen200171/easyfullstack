@@ -19,7 +19,8 @@ public class StudentMapper {
                 departmentId,
                 petId,
                 petName,
-                student.getReturnCount()
+                student.getReturnCount(),
+                student.getDeposit()
         );
     }
 

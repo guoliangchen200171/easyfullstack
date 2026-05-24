@@ -1,10 +1,11 @@
 package net.fernandosalas.ems.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 @Entity
 @Setter
 @Getter
@@ -27,6 +28,9 @@ public class Student {
 
     @Column(name = "return_count", nullable = false)
     private int returnCount = 0;
+
+    @Column(name = "deposit", nullable = false, precision = 10, scale = 2)
+    private BigDecimal deposit = BigDecimal.ZERO;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", unique = true)

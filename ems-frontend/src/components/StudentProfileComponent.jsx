@@ -47,6 +47,12 @@ const StudentProfileComponent = () => {
                 <th scope="row">Return Count</th>
                 <td>{profile.returnCount ?? 0}</td>
               </tr>
+              <tr>
+                <th scope="row">存款</th>
+                <td>
+                  {Number(profile.deposit ?? 0).toFixed(2)} 元
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
