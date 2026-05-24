@@ -58,6 +58,11 @@ const HeaderComponent = () => {
                   Adoption History
                 </NavLink>
               </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/product-orders">
+                  下单记录
+                </NavLink>
+              </li>
             </ul>
             <button
               className="btn btn-outline-light btn-sm"

@@ -27,6 +27,7 @@ import RegisterDepartmentComponent from "./components/RegisterDepartmentComponen
 import RegisterStudentComponent from "./components/RegisterStudentComponent";
 import AdoptionApprovalComponent from "./components/AdoptionApprovalComponent";
 import ProductManagementComponent from "./components/ProductManagementComponent";
+import ListProductOrderComponent from "./components/ListProductOrderComponent";
 
 const AdminLayout = () => (
   <>
@@ -87,6 +88,10 @@ function App() {
             <Route
               path="/adoption-requests"
               element={<AdoptionApprovalComponent />}
+            />
+            <Route
+              path="/product-orders"
+              element={<ListProductOrderComponent />}
             />
           </Route>
         </Route>

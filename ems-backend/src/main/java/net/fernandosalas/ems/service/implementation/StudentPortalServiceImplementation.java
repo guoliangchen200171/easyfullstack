@@ -18,6 +18,7 @@ import net.fernandosalas.ems.security.SecurityUtils;
 import net.fernandosalas.ems.security.UserPrincipal;
 import net.fernandosalas.ems.service.AdoptionHistoryService;
 import net.fernandosalas.ems.service.AdoptionRequestService;
+import net.fernandosalas.ems.service.ProductOrderService;
 import net.fernandosalas.ems.service.StudentPortalService;
 import net.fernandosalas.ems.service.StudentService;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
 
     private final StudentRepository studentRepository;
     private final ProductRepository productRepository;
+    private final ProductOrderService productOrderService;
     private final AdoptionRequestService adoptionRequestService;
     private final StudentService studentService;
     private final AdoptionHistoryService adoptionHistoryService;
@@ -75,10 +77,13 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
         if (quantity <= 0) {
             throw new InvalidSearchParameterException("购买数量必须大于 0");
         }
-        Student student = getCurrentStudentEntity();
-        Product product = productRepository.findById(productId)
+        Long studentId = requireStudentId();
+
+        Product product = productRepository.findByIdForUpdate(productId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Product was not found with id: " + productId));
+        Student student = studentRepository.findByIdForUpdate(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student was not found"));
 
         BigDecimal price = product.getPrice() != null ? product.getPrice() : BigDecimal.ZERO;
         BigDecimal totalCost = price.multiply(BigDecimal.valueOf(quantity));
@@ -95,17 +100,22 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
             throw new InvalidSearchParameterException("库存不足");
         }
 
-        student.setDeposit(deposit.subtract(totalCost));
-        product.setStock(product.getStock() - quantity);
-        studentRepository.save(student);
-        productRepository.save(product);
+        int updatedRows = productRepository.deductStockIfAvailable(productId, quantity);
+        if (updatedRows == 0) {
+            throw new InvalidSearchParameterException("库存不足");
+        }
 
+        student.setDeposit(deposit.subtract(totalCost));
+        studentRepository.save(student);
+        productOrderService.recordOrder(student, product, quantity, price, totalCost);
+
+        int remainingStock = product.getStock() - quantity;
         return new PurchaseResultDto(
                 product.getId(),
                 quantity,
                 totalCost,
                 student.getDeposit(),
-                product.getStock());
+                remainingStock);
     }
 
     private Long requireStudentId() {
