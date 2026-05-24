@@ -24,10 +24,15 @@ const HeaderComponent = () => {
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <a className="navbar-brand" href="#">
-            宠物领养系统
+            学生宠物系统
           </a>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav me-auto">
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/products">
+                  商品管理
+                </NavLink>
+              </li>
               <li className="nav-item">
                 <NavLink className="nav-link" to="/students">
                   Students

@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
       case "DEPARTMENT":
         return "/department/dashboard";
       default:
-        return "/students";
+        return "/products";
     }
   };
 

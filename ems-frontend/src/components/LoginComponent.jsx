@@ -36,7 +36,7 @@ const LoginComponent = () => {
       <div className="card shadow-sm">
         <div className="card-body p-4">
           <h2 className="text-center mb-4">登录</h2>
-          <p className="text-muted text-center mb-4">宠物领养系统</p>
+          <p className="text-muted text-center mb-4">学生宠物系统</p>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="username" className="form-label">

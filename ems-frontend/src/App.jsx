@@ -25,6 +25,7 @@ import DepartmentDashboardComponent from "./components/DepartmentDashboardCompon
 import RegisterDepartmentComponent from "./components/RegisterDepartmentComponent";
 import RegisterStudentComponent from "./components/RegisterStudentComponent";
 import AdoptionApprovalComponent from "./components/AdoptionApprovalComponent";
+import ProductManagementComponent from "./components/ProductManagementComponent";
 
 const AdminLayout = () => (
   <>
@@ -60,7 +61,8 @@ function App() {
 
         <Route element={<RoleRoute role="ADMIN" />}>
           <Route element={<AdminLayout />}>
-            <Route path="/" element={<Navigate to="/students" replace />} />
+            <Route path="/" element={<Navigate to="/products" replace />} />
+            <Route path="/products" element={<ProductManagementComponent />} />
             <Route path="/students" element={<ListStudentComponent />} />
             <Route path="/add-student" element={<StudentComponent />} />
             <Route path="/edit-student/:id" element={<StudentComponent />} />
