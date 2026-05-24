@@ -1,11 +1,11 @@
-import axios from "axios";
+import api from "./api";
 
-const REST_API_URL = "http://localhost:8080/api/adoption-history";
+const REST_API_URL = "/api/adoption-history";
 
 export const listAdoptionHistory = () => {
-  return axios.get(REST_API_URL);
+  return api.get(REST_API_URL);
 };
 
 export const listAdoptionHistoryByStudent = (studentId) => {
-  return axios.get(`${REST_API_URL}/student/${studentId}`);
+  return api.get(`${REST_API_URL}/student/${studentId}`);
 };

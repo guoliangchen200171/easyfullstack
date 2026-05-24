@@ -1,31 +1,31 @@
-import axios from "axios";
+import api from "./api";
 
-const REST_API_URL = "http://localhost:8080/api/pets";
+const REST_API_URL = "/api/pets";
 
 export const listPets = () => {
-  return axios.get(REST_API_URL);
+  return api.get(REST_API_URL);
 };
 
 export const createPet = (pet) => {
-  return axios.post(REST_API_URL, pet);
+  return api.post(REST_API_URL, pet);
 };
 
 export const getPetById = (id) => {
-  return axios.get(REST_API_URL + "/" + id);
+  return api.get(REST_API_URL + "/" + id);
 };
 
 export const updatePet = (id, pet) => {
-  return axios.put(REST_API_URL + "/" + id, pet);
+  return api.put(REST_API_URL + "/" + id, pet);
 };
 
 export const deletePet = (id) => {
-  return axios.delete(REST_API_URL + "/" + id);
+  return api.delete(REST_API_URL + "/" + id);
 };
 
 export const adoptPet = (petId, studentId) => {
-  return axios.put(REST_API_URL + "/" + petId + "/adopt/" + studentId);
+  return api.put(REST_API_URL + "/" + petId + "/adopt/" + studentId);
 };
 
 export const returnPetById = (petId) => {
-  return axios.put(REST_API_URL + "/" + petId + "/return");
+  return api.put(REST_API_URL + "/" + petId + "/return");
 };

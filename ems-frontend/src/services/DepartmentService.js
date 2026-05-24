@@ -1,27 +1,27 @@
-import axios from "axios";
+import api from "./api";
 
-const REST_API_URL = "http://localhost:8080/api/departments";
+const REST_API_URL = "/api/departments";
 
 export const listDepartments = () => {
-  return axios.get(REST_API_URL);
+  return api.get(REST_API_URL);
 };
 
 export const createDepartment = (department) => {
-  return axios.post(REST_API_URL, department);
+  return api.post(REST_API_URL, department);
 };
 
 export const getDepartmentById = (id) => {
-  return axios.get(REST_API_URL + "/" + id);
+  return api.get(REST_API_URL + "/" + id);
 };
 
 export const updateDeparment = (id, department) => {
-  return axios.put(REST_API_URL + "/" + id, department);
+  return api.put(REST_API_URL + "/" + id, department);
 };
 
 export const deleteDepartment = (id) => {
-  return axios.delete(REST_API_URL + "/" + id);
+  return api.delete(REST_API_URL + "/" + id);
 };
 
 export const getStudentsByDepartmentId = (id) => {
-  return axios.get(REST_API_URL + "/" + id + "/students");
+  return api.get(REST_API_URL + "/" + id + "/students");
 };
