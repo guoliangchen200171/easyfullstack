@@ -10,4 +10,7 @@ public interface ProductOrderRepository extends JpaRepository<ProductOrder, Long
 
     @EntityGraph(attributePaths = {"student", "product"})
     Page<ProductOrder> findAllByOrderByOrderedAtDesc(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"student", "product"})
+    Page<ProductOrder> findByStudentId(Long studentId, Pageable pageable);
 }

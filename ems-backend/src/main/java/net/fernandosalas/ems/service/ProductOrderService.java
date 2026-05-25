@@ -13,4 +13,7 @@ public interface ProductOrderService {
                      BigDecimal unitPrice, BigDecimal totalPrice);
 
     PageResponse<ProductOrderDto> getOrdersPage(int page, int size);
+
+    PageResponse<ProductOrderDto> getOrdersPageByStudentId(
+            Long studentId, int page, int size, boolean ascending);
 }

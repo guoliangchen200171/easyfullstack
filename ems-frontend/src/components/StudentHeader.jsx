@@ -40,6 +40,11 @@ const StudentHeader = () => {
                 商品购买
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/student/orders">
+                购买记录
+              </NavLink>
+            </li>
           </ul>
           <button
             className="btn btn-outline-light btn-sm me-3"

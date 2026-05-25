@@ -3,6 +3,8 @@ package net.fernandosalas.ems.service.implementation;
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.AdoptionHistoryDto;
 import net.fernandosalas.ems.dto.AdoptionRequestDto;
+import net.fernandosalas.ems.dto.PageResponse;
+import net.fernandosalas.ems.dto.ProductOrderDto;
 import net.fernandosalas.ems.dto.PurchaseResultDto;
 import net.fernandosalas.ems.dto.StudentProfileDto;
 import net.fernandosalas.ems.entity.Department;
@@ -116,6 +118,13 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
                 totalCost,
                 student.getDeposit(),
                 remainingStock);
+    }
+
+    @Override
+    public PageResponse<ProductOrderDto> getCurrentStudentProductOrdersPage(
+            int page, int size, boolean ascending) {
+        return productOrderService.getOrdersPageByStudentId(
+                requireStudentId(), page, size, ascending);
     }
 
     private Long requireStudentId() {

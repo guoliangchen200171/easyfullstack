@@ -3,9 +3,12 @@ package net.fernandosalas.ems.controller;
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.AdoptionHistoryDto;
 import net.fernandosalas.ems.dto.AdoptionRequestDto;
+import net.fernandosalas.ems.dto.PageResponse;
+import net.fernandosalas.ems.dto.ProductOrderDto;
 import net.fernandosalas.ems.dto.PurchaseQuantityRequest;
 import net.fernandosalas.ems.dto.PurchaseResultDto;
 import net.fernandosalas.ems.dto.StudentProfileDto;
+import net.fernandosalas.ems.exception.InvalidSearchParameterException;
 import net.fernandosalas.ems.entity.Product;
 import net.fernandosalas.ems.service.StudentPortalService;
 import org.springframework.http.HttpStatus;
@@ -63,5 +66,25 @@ public class StudentPortalController {
         PurchaseResultDto result = studentPortalService.purchaseProductForCurrentStudent(
                 productId, request.getQuantity());
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/product-orders")
+    public ResponseEntity<PageResponse<ProductOrderDto>> getMyProductOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "desc") String sort) {
+        boolean ascending = parseSortAscending(sort);
+        return ResponseEntity.ok(
+                studentPortalService.getCurrentStudentProductOrdersPage(page, size, ascending));
+    }
+
+    private static boolean parseSortAscending(String sort) {
+        if ("asc".equalsIgnoreCase(sort)) {
+            return true;
+        }
+        if ("desc".equalsIgnoreCase(sort)) {
+            return false;
+        }
+        throw new InvalidSearchParameterException("sort 参数仅支持 asc 或 desc");
     }
 }

@@ -11,6 +11,7 @@ import net.fernandosalas.ems.repository.ProductOrderRepository;
 import net.fernandosalas.ems.service.ProductOrderService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -42,6 +43,20 @@ public class ProductOrderServiceImplementation implements ProductOrderService {
     public PageResponse<ProductOrderDto> getOrdersPage(int page, int size) {
         Page<ProductOrder> orderPage = productOrderRepository.findAllByOrderByOrderedAtDesc(
                 PageRequest.of(page, size));
+        List<ProductOrderDto> content = orderPage.getContent().stream()
+                .map(ProductOrderMapper::mapToProductOrderDto)
+                .collect(Collectors.toList());
+        return PageResponse.from(orderPage, content);
+    }
+
+    @Override
+    public PageResponse<ProductOrderDto> getOrdersPageByStudentId(
+            Long studentId, int page, int size, boolean ascending) {
+        Sort sort = ascending
+                ? Sort.by("orderedAt").ascending()
+                : Sort.by("orderedAt").descending();
+        Page<ProductOrder> orderPage = productOrderRepository.findByStudentId(
+                studentId, PageRequest.of(page, size, sort));
         List<ProductOrderDto> content = orderPage.getContent().stream()
                 .map(ProductOrderMapper::mapToProductOrderDto)
                 .collect(Collectors.toList());

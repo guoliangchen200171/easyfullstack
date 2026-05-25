@@ -16,3 +16,8 @@ export const listProductsForMe = () => api.get("/api/students/me/products");
 
 export const purchaseProductForMe = (productId, quantity) =>
   api.post(`/api/students/me/products/${productId}/purchase`, { quantity });
+
+export const listMyProductOrdersPage = (page = 0, size = 10, sort = "desc") =>
+  api.get(
+    `/api/students/me/product-orders?page=${page}&size=${size}&sort=${sort}`
+  );

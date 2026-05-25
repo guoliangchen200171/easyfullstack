@@ -2,6 +2,8 @@ package net.fernandosalas.ems.service;
 
 import net.fernandosalas.ems.dto.AdoptionHistoryDto;
 import net.fernandosalas.ems.dto.AdoptionRequestDto;
+import net.fernandosalas.ems.dto.PageResponse;
+import net.fernandosalas.ems.dto.ProductOrderDto;
 import net.fernandosalas.ems.dto.PurchaseResultDto;
 import net.fernandosalas.ems.dto.StudentProfileDto;
 import net.fernandosalas.ems.entity.Product;
@@ -22,4 +24,7 @@ public interface StudentPortalService {
     List<Product> listProductsForCurrentStudent();
 
     PurchaseResultDto purchaseProductForCurrentStudent(Long productId, int quantity);
+
+    PageResponse<ProductOrderDto> getCurrentStudentProductOrdersPage(
+            int page, int size, boolean ascending);
 }
