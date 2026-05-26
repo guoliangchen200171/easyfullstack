@@ -13,6 +13,7 @@ import net.fernandosalas.ems.exception.StudentHasNoPetException;
 import net.fernandosalas.ems.mapper.StudentMapper;
 import net.fernandosalas.ems.repository.DepartmentRepository;
 import net.fernandosalas.ems.repository.StudentRepository;
+import net.fernandosalas.ems.service.MembershipService;
 import net.fernandosalas.ems.service.PetService;
 import net.fernandosalas.ems.service.StudentService;
 import net.fernandosalas.ems.service.UserService;
@@ -41,6 +42,9 @@ public class StudentServiceImplementation implements StudentService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MembershipService membershipService;
     @Override
     public StudentDto createStudent(StudentDto studentDto) {
         if (studentRepository.existsByEmail(studentDto.getEmail())) {
@@ -59,6 +63,7 @@ public class StudentServiceImplementation implements StudentService {
         User user = userService.createStudentUser(savedStudent.getEmail());
         savedStudent.setUser(user);
         studentRepository.save(savedStudent);
+        membershipService.createForUser(user);
         return StudentMapper.mapToStudentDto(savedStudent);
     }
 
@@ -119,6 +124,7 @@ public class StudentServiceImplementation implements StudentService {
         User linkedUser = student.getUser();
         studentRepository.deleteById(studentId);
         if (linkedUser != null) {
+            membershipService.deleteByUserId(linkedUser.getId());
             userService.deleteById(linkedUser.getId());
         }
     }

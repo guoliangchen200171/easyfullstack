@@ -53,6 +53,10 @@ const StudentProfileComponent = () => {
                   {Number(profile.deposit ?? 0).toFixed(2)} 元
                 </td>
               </tr>
+              <tr>
+                <th scope="row">会员积分</th>
+                <td>{profile.membershipPoints ?? 0}</td>
+              </tr>
             </tbody>
           </table>
         </div>

@@ -22,4 +22,5 @@ public class StudentProfileDto {
     private String petName;
     private int returnCount;
     private BigDecimal deposit;
+    private long membershipPoints;
 }

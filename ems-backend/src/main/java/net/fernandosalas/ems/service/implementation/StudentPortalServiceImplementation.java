@@ -13,6 +13,7 @@ import net.fernandosalas.ems.entity.Department;
 import net.fernandosalas.ems.entity.Pet;
 import net.fernandosalas.ems.entity.ProductInventory;
 import net.fernandosalas.ems.entity.Student;
+import net.fernandosalas.ems.entity.User;
 import net.fernandosalas.ems.enums.Role;
 import net.fernandosalas.ems.exception.InvalidSearchParameterException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
@@ -22,6 +23,7 @@ import net.fernandosalas.ems.security.SecurityUtils;
 import net.fernandosalas.ems.security.UserPrincipal;
 import net.fernandosalas.ems.service.AdoptionHistoryService;
 import net.fernandosalas.ems.service.AdoptionRequestService;
+import net.fernandosalas.ems.service.MembershipService;
 import net.fernandosalas.ems.service.ProductDetailCacheService;
 import net.fernandosalas.ems.service.ProductOrderService;
 import net.fernandosalas.ems.service.ProductService;
@@ -51,6 +53,7 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
     private final AdoptionRequestService adoptionRequestService;
     private final StudentService studentService;
     private final AdoptionHistoryService adoptionHistoryService;
+    private final MembershipService membershipService;
 
     @Override
     public StudentProfileDto getCurrentStudentProfile() {
@@ -148,6 +151,7 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
         studentRepository.save(student);
         productOrderService.recordOrder(
                 student, inventory, detail.getName(), quantity, price, totalCost);
+        membershipService.addPointsForPurchase(student.getUser(), totalCost);
 
         int remainingStock = rollbackRedisOnDbFailure
                 ? remainingStockFromRedis
@@ -208,6 +212,10 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
     private StudentProfileDto toProfileDto(Student student) {
         Department department = student.getDepartment();
         Pet pet = student.getPet();
+        User user = student.getUser();
+        long membershipPoints = user != null
+                ? membershipService.getPointsByUserId(user.getId())
+                : 0L;
         return new StudentProfileDto(
                 student.getId(),
                 student.getFirstName(),
@@ -218,6 +226,7 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
                 pet != null ? pet.getId() : null,
                 pet != null ? pet.getName() : null,
                 student.getReturnCount(),
-                student.getDeposit());
+                student.getDeposit(),
+                membershipPoints);
     }
 }

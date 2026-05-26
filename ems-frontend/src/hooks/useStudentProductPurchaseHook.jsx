@@ -11,6 +11,7 @@ const PURCHASE_INTERVAL_MS = 1000;
 const useStudentProductPurchaseHook = () => {
   const [products, setProducts] = useState([]);
   const [deposit, setDeposit] = useState(0);
+  const [membershipPoints, setMembershipPoints] = useState(0);
   const [quantities, setQuantities] = useState({});
   const lastPurchaseTimestamps = useRef(new Map());
 
@@ -18,6 +19,7 @@ const useStudentProductPurchaseHook = () => {
     try {
       const response = await getMyProfile();
       setDeposit(Number(response.data.deposit ?? 0));
+      setMembershipPoints(Number(response.data.membershipPoints ?? 0));
     } catch (err) {
       console.log(err);
     }
@@ -104,6 +106,7 @@ const useStudentProductPurchaseHook = () => {
   return {
     products,
     deposit,
+    membershipPoints,
     quantities,
     setQuantity,
     handlePurchase,
