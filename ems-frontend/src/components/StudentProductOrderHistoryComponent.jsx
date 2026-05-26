@@ -6,33 +6,135 @@ const StudentProductOrderHistoryComponent = () => {
     orders,
     page,
     sort,
+    searchInput,
+    fromDateInput,
+    toDateInput,
+    minPriceInput,
+    maxPriceInput,
+    hasAppliedFilters,
     totalPages,
     totalElements,
     formatDateTime,
     formatMoney,
     handlePageChange,
     handleSortChange,
+    handleSearchSubmit,
+    handleClearSearch,
+    setSearchInput,
+    setFromDateInput,
+    setToDateInput,
+    setMinPriceInput,
+    setMaxPriceInput,
   } = useStudentProductOrderHistoryHook();
 
   return (
     <div className="container">
       <h2 className="text-center py-3">我的购买记录</h2>
-      <div className="row mb-3">
-        <div className="col-md-4 offset-md-8">
-          <label htmlFor="order-sort" className="form-label mb-1">
-            排序方式
-          </label>
-          <select
-            id="order-sort"
-            className="form-select"
-            value={sort}
-            onChange={(e) => handleSortChange(e.target.value)}
-          >
-            <option value="desc">倒序（最新在前）</option>
-            <option value="asc">正序（最早在前）</option>
-          </select>
+      <form onSubmit={handleSearchSubmit}>
+        <div className="row mb-3 g-3 align-items-end">
+          <div className="col-md-8">
+            <label htmlFor="order-product-search" className="form-label mb-1">
+              按商品名称搜索
+            </label>
+            <input
+              id="order-product-search"
+              type="text"
+              className="form-control"
+              placeholder="输入商品名称"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="order-sort" className="form-label mb-1">
+              排序方式
+            </label>
+            <select
+              id="order-sort"
+              className="form-select"
+              value={sort}
+              onChange={(e) => handleSortChange(e.target.value)}
+            >
+              <option value="desc">倒序（最新在前）</option>
+              <option value="asc">正序（最早在前）</option>
+            </select>
+          </div>
         </div>
-      </div>
+        <div className="row mb-3 g-3 align-items-end">
+          <div className="col-md-3">
+            <label htmlFor="order-from-date" className="form-label mb-1">
+              开始日期
+            </label>
+            <input
+              id="order-from-date"
+              type="date"
+              className="form-control"
+              value={fromDateInput}
+              onChange={(e) => setFromDateInput(e.target.value)}
+            />
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="order-to-date" className="form-label mb-1">
+              结束日期
+            </label>
+            <input
+              id="order-to-date"
+              type="date"
+              className="form-control"
+              value={toDateInput}
+              onChange={(e) => setToDateInput(e.target.value)}
+            />
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="order-min-price" className="form-label mb-1">
+              最低总价（元）
+            </label>
+            <input
+              id="order-min-price"
+              type="number"
+              min="0"
+              step="0.01"
+              className="form-control"
+              placeholder="0.00"
+              value={minPriceInput}
+              onChange={(e) => setMinPriceInput(e.target.value)}
+            />
+          </div>
+          <div className="col-md-3">
+            <label htmlFor="order-max-price" className="form-label mb-1">
+              最高总价（元）
+            </label>
+            <input
+              id="order-max-price"
+              type="number"
+              min="0"
+              step="0.01"
+              className="form-control"
+              placeholder="0.00"
+              value={maxPriceInput}
+              onChange={(e) => setMaxPriceInput(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="row mb-3 g-2">
+          <div className="col-auto">
+            <button type="submit" className="btn btn-outline-primary">
+              搜索
+            </button>
+          </div>
+          {hasAppliedFilters && (
+            <div className="col-auto">
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={handleClearSearch}
+              >
+                清空
+              </button>
+            </div>
+          )}
+        </div>
+      </form>
       <table className="table table-striped">
         <thead>
           <tr>

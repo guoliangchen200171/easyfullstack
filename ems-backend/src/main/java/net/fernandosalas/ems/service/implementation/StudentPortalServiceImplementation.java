@@ -4,37 +4,49 @@ import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.AdoptionHistoryDto;
 import net.fernandosalas.ems.dto.AdoptionRequestDto;
 import net.fernandosalas.ems.dto.PageResponse;
+import net.fernandosalas.ems.dto.ProductDetailCacheDto;
+import net.fernandosalas.ems.dto.ProductDto;
 import net.fernandosalas.ems.dto.ProductOrderDto;
 import net.fernandosalas.ems.dto.PurchaseResultDto;
 import net.fernandosalas.ems.dto.StudentProfileDto;
 import net.fernandosalas.ems.entity.Department;
 import net.fernandosalas.ems.entity.Pet;
-import net.fernandosalas.ems.entity.Product;
+import net.fernandosalas.ems.entity.ProductInventory;
 import net.fernandosalas.ems.entity.Student;
 import net.fernandosalas.ems.enums.Role;
 import net.fernandosalas.ems.exception.InvalidSearchParameterException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
-import net.fernandosalas.ems.repository.ProductRepository;
+import net.fernandosalas.ems.repository.ProductInventoryRepository;
 import net.fernandosalas.ems.repository.StudentRepository;
 import net.fernandosalas.ems.security.SecurityUtils;
 import net.fernandosalas.ems.security.UserPrincipal;
 import net.fernandosalas.ems.service.AdoptionHistoryService;
 import net.fernandosalas.ems.service.AdoptionRequestService;
+import net.fernandosalas.ems.service.ProductDetailCacheService;
 import net.fernandosalas.ems.service.ProductOrderService;
+import net.fernandosalas.ems.service.ProductService;
+import net.fernandosalas.ems.service.ProductStockCacheService;
 import net.fernandosalas.ems.service.StudentPortalService;
 import net.fernandosalas.ems.service.StudentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class StudentPortalServiceImplementation implements StudentPortalService {
 
+    private static final long INSUFFICIENT_STOCK = -1L;
+
     private final StudentRepository studentRepository;
-    private final ProductRepository productRepository;
+    private final ProductInventoryRepository inventoryRepository;
+    private final ProductDetailCacheService detailCacheService;
+    private final ProductStockCacheService stockCacheService;
+    private final ProductService productService;
     private final ProductOrderService productOrderService;
     private final AdoptionRequestService adoptionRequestService;
     private final StudentService studentService;
@@ -69,8 +81,8 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
     }
 
     @Override
-    public List<Product> listProductsForCurrentStudent() {
-        return productRepository.findAll();
+    public List<ProductDto> listProductsForCurrentStudent() {
+        return productService.getAllProducts();
     }
 
     @Override
@@ -81,13 +93,12 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
         }
         Long studentId = requireStudentId();
 
-        Product product = productRepository.findByIdForUpdate(productId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Product was not found with id: " + productId));
+        ProductDetailCacheDto detail = detailCacheService.getByProductId(productId);
+
         Student student = studentRepository.findByIdForUpdate(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Student was not found"));
 
-        BigDecimal price = product.getPrice() != null ? product.getPrice() : BigDecimal.ZERO;
+        BigDecimal price = detail.getPrice() != null ? detail.getPrice() : BigDecimal.ZERO;
         BigDecimal totalCost = price.multiply(BigDecimal.valueOf(quantity));
         BigDecimal deposit = student.getDeposit() != null ? student.getDeposit() : BigDecimal.ZERO;
 
@@ -98,33 +109,85 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
         if (deposit.compareTo(totalCost) < 0) {
             throw new InvalidSearchParameterException("存款余额不足");
         }
-        if (product.getStock() < quantity) {
-            throw new InvalidSearchParameterException("库存不足");
+
+        Optional<Long> redisDeduct = stockCacheService.deductIfAvailable(productId, quantity);
+        if (redisDeduct.isPresent()) {
+            if (redisDeduct.get() == INSUFFICIENT_STOCK) {
+                throw new InvalidSearchParameterException("库存不足");
+            }
+            return completePurchaseWithDb(
+                    productId, quantity, detail, student, price, totalCost, redisDeduct.get().intValue(), true);
         }
 
-        int updatedRows = productRepository.deductStockIfAvailable(productId, quantity);
+        return purchaseWithDatabaseStockOnly(productId, quantity, detail, student, price, totalCost);
+    }
+
+    private PurchaseResultDto completePurchaseWithDb(
+            Long productId,
+            int quantity,
+            ProductDetailCacheDto detail,
+            Student student,
+            BigDecimal price,
+            BigDecimal totalCost,
+            int remainingStockFromRedis,
+            boolean rollbackRedisOnDbFailure) {
+        ProductInventory inventory = inventoryRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Product was not found with id: " + productId));
+
+        int updatedRows = inventoryRepository.deductStockIfAvailable(productId, quantity);
         if (updatedRows == 0) {
+            if (rollbackRedisOnDbFailure) {
+                stockCacheService.rollback(productId, quantity);
+            }
             throw new InvalidSearchParameterException("库存不足");
         }
 
+        BigDecimal deposit = student.getDeposit() != null ? student.getDeposit() : BigDecimal.ZERO;
         student.setDeposit(deposit.subtract(totalCost));
         studentRepository.save(student);
-        productOrderService.recordOrder(student, product, quantity, price, totalCost);
+        productOrderService.recordOrder(
+                student, inventory, detail.getName(), quantity, price, totalCost);
 
-        int remainingStock = product.getStock() - quantity;
+        int remainingStock = rollbackRedisOnDbFailure
+                ? remainingStockFromRedis
+                : stockCacheService.getStock(productId);
+
         return new PurchaseResultDto(
-                product.getId(),
+                inventory.getId(),
                 quantity,
                 totalCost,
                 student.getDeposit(),
                 remainingStock);
     }
 
+    private PurchaseResultDto purchaseWithDatabaseStockOnly(
+            Long productId,
+            int quantity,
+            ProductDetailCacheDto detail,
+            Student student,
+            BigDecimal price,
+            BigDecimal totalCost) {
+        ProductInventory inventory = inventoryRepository.findByIdForUpdate(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Product was not found with id: " + productId));
+
+        if (inventory.getStock() < quantity) {
+            throw new InvalidSearchParameterException("库存不足");
+        }
+
+        return completePurchaseWithDb(
+                productId, quantity, detail, student, price, totalCost,
+                inventory.getStock() - quantity, false);
+    }
+
     @Override
     public PageResponse<ProductOrderDto> getCurrentStudentProductOrdersPage(
-            int page, int size, boolean ascending) {
+            int page, int size, boolean ascending, String productName,
+            LocalDate fromDate, LocalDate toDate, BigDecimal minPrice, BigDecimal maxPrice) {
         return productOrderService.getOrdersPageByStudentId(
-                requireStudentId(), page, size, ascending);
+                requireStudentId(), page, size, ascending, productName,
+                fromDate, toDate, minPrice, maxPrice);
     }
 
     private Long requireStudentId() {

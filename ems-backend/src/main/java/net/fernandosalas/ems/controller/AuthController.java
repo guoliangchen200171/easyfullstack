@@ -8,6 +8,9 @@ import net.fernandosalas.ems.dto.LoginRequest;
 import net.fernandosalas.ems.dto.StudentRegisterRequest;
 import net.fernandosalas.ems.security.UserPrincipal;
 import net.fernandosalas.ems.service.AuthRegistrationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +30,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
+@Tag(name = "认证", description = "登录、登出、注册与当前用户")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -34,7 +38,9 @@ public class AuthController {
     private final SecurityContextRepository securityContextRepository =
             new HttpSessionSecurityContextRepository();
 
+    @Operation(summary = "用户登录", description = "Session 登录，成功后浏览器保存 JSESSIONID，再调试其它需认证接口")
     @PostMapping("/login")
+    @SecurityRequirements
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest,
                                                      HttpServletRequest request,
                                                      HttpServletResponse response) {
@@ -56,6 +62,7 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "退出登录", description = "清除当前 Session")
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout(HttpServletRequest request,
                                                       HttpServletResponse response,
@@ -64,6 +71,7 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "已退出登录"));
     }
 
+    @Operation(summary = "获取当前用户", description = "返回是否已登录、用户名与角色")
     @GetMapping("/me")
     public ResponseEntity<Map<String, Object>> me(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -73,7 +81,9 @@ public class AuthController {
         return ResponseEntity.ok(buildAuthResponse(authentication, null));
     }
 
+    @Operation(summary = "注册部门账号", description = "公开注册，创建部门及部门登录用户")
     @PostMapping("/register/department")
+    @SecurityRequirements
     public ResponseEntity<Map<String, String>> registerDepartment(
             @RequestBody DepartmentRegisterRequest request) {
         authRegistrationService.registerDepartment(request);
@@ -81,7 +91,9 @@ public class AuthController {
                 .body(Map.of("message", "部门注册成功"));
     }
 
+    @Operation(summary = "注册学生账号", description = "公开注册，默认登录密码为 123")
     @PostMapping("/register/student")
+    @SecurityRequirements
     public ResponseEntity<Map<String, String>> registerStudent(
             @RequestBody StudentRegisterRequest request) {
         authRegistrationService.registerStudent(request);

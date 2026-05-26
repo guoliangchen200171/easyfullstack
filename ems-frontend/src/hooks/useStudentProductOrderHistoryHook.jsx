@@ -36,12 +36,35 @@ const useStudentProductOrderHistoryHook = () => {
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(0);
   const [sort, setSort] = useState("desc");
+  const [searchInput, setSearchInput] = useState("");
+  const [fromDateInput, setFromDateInput] = useState("");
+  const [toDateInput, setToDateInput] = useState("");
+  const [minPriceInput, setMinPriceInput] = useState("");
+  const [maxPriceInput, setMaxPriceInput] = useState("");
+  const [appliedName, setAppliedName] = useState("");
+  const [appliedFrom, setAppliedFrom] = useState("");
+  const [appliedTo, setAppliedTo] = useState("");
+  const [appliedMinPrice, setAppliedMinPrice] = useState("");
+  const [appliedMaxPrice, setAppliedMaxPrice] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
 
+  const hasAppliedFilters =
+    appliedName ||
+    appliedFrom ||
+    appliedTo ||
+    appliedMinPrice !== "" ||
+    appliedMaxPrice !== "";
+
   const fetchOrders = useCallback(async () => {
     try {
-      const response = await listMyProductOrdersPage(page, PAGE_SIZE, sort);
+      const response = await listMyProductOrdersPage(page, PAGE_SIZE, sort, {
+        name: appliedName,
+        from: appliedFrom || undefined,
+        to: appliedTo || undefined,
+        minPrice: appliedMinPrice === "" ? undefined : appliedMinPrice,
+        maxPrice: appliedMaxPrice === "" ? undefined : appliedMaxPrice,
+      });
       const data = response.data;
       setOrders(data.content);
       setTotalPages(data.totalPages);
@@ -49,7 +72,15 @@ const useStudentProductOrderHistoryHook = () => {
     } catch (err) {
       console.log(err);
     }
-  }, [page, sort]);
+  }, [
+    page,
+    sort,
+    appliedName,
+    appliedFrom,
+    appliedTo,
+    appliedMinPrice,
+    appliedMaxPrice,
+  ]);
 
   useEffect(() => {
     fetchOrders();
@@ -64,16 +95,53 @@ const useStudentProductOrderHistoryHook = () => {
     setPage(0);
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    setAppliedName(searchInput.trim());
+    setAppliedFrom(fromDateInput);
+    setAppliedTo(toDateInput);
+    setAppliedMinPrice(minPriceInput);
+    setAppliedMaxPrice(maxPriceInput);
+    setPage(0);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setFromDateInput("");
+    setToDateInput("");
+    setMinPriceInput("");
+    setMaxPriceInput("");
+    setAppliedName("");
+    setAppliedFrom("");
+    setAppliedTo("");
+    setAppliedMinPrice("");
+    setAppliedMaxPrice("");
+    setPage(0);
+  };
+
   return {
     orders,
     page,
     sort,
+    searchInput,
+    fromDateInput,
+    toDateInput,
+    minPriceInput,
+    maxPriceInput,
+    hasAppliedFilters,
     totalPages,
     totalElements,
     formatDateTime,
     formatMoney,
     handlePageChange,
     handleSortChange,
+    handleSearchSubmit,
+    handleClearSearch,
+    setSearchInput,
+    setFromDateInput,
+    setToDateInput,
+    setMinPriceInput,
+    setMaxPriceInput,
   };
 };
 

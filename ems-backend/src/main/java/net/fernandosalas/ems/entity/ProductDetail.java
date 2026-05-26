@@ -13,12 +13,17 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "products")
-public class Product {
+@Table(name = "product_detail")
+public class ProductDetail {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "product_id")
+    private Long productId;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "product_id")
+    private ProductInventory inventory;
 
     @Column(name = "name", nullable = false,
             columnDefinition = "VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
@@ -30,7 +35,4 @@ public class Product {
 
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price = BigDecimal.ZERO;
-
-    @Column(name = "stock", nullable = false)
-    private int stock = 0;
 }

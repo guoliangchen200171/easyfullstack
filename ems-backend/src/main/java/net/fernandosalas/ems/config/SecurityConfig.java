@@ -32,6 +32,11 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         .requestMatchers("/api/auth/login", "/api/auth/register/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/departments").permitAll()
                         .requestMatchers("/api/students/me/**").hasRole("STUDENT")
