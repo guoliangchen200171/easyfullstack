@@ -23,13 +23,15 @@ import net.fernandosalas.ems.security.SecurityUtils;
 import net.fernandosalas.ems.security.UserPrincipal;
 import net.fernandosalas.ems.service.AdoptionHistoryService;
 import net.fernandosalas.ems.service.AdoptionRequestService;
-import net.fernandosalas.ems.service.MembershipService;
+import net.fernandosalas.ems.event.PurchaseCompletedEvent;
+import net.fernandosalas.ems.service.MembershipRemoteService;
 import net.fernandosalas.ems.service.ProductDetailCacheService;
 import net.fernandosalas.ems.service.ProductOrderService;
 import net.fernandosalas.ems.service.ProductService;
 import net.fernandosalas.ems.service.ProductStockCacheService;
 import net.fernandosalas.ems.service.StudentPortalService;
 import net.fernandosalas.ems.service.StudentService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +55,8 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
     private final AdoptionRequestService adoptionRequestService;
     private final StudentService studentService;
     private final AdoptionHistoryService adoptionHistoryService;
-    private final MembershipService membershipService;
+    private final MembershipRemoteService membershipRemoteService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public StudentProfileDto getCurrentStudentProfile() {
@@ -151,7 +154,11 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
         studentRepository.save(student);
         productOrderService.recordOrder(
                 student, inventory, detail.getName(), quantity, price, totalCost);
-        membershipService.addPointsForPurchase(student.getUser(), totalCost);
+        User user = student.getUser();
+        if (user != null && user.getId() != null) {
+            eventPublisher.publishEvent(
+                    new PurchaseCompletedEvent(this, user.getId(), totalCost));
+        }
 
         int remainingStock = rollbackRedisOnDbFailure
                 ? remainingStockFromRedis
@@ -214,7 +221,7 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
         Pet pet = student.getPet();
         User user = student.getUser();
         long membershipPoints = user != null
-                ? membershipService.getPointsByUserId(user.getId())
+                ? membershipRemoteService.getPointsByUserId(user.getId())
                 : 0L;
         return new StudentProfileDto(
                 student.getId(),

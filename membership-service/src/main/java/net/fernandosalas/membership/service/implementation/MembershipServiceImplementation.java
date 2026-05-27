@@ -1,10 +1,9 @@
-package net.fernandosalas.ems.service.implementation;
+package net.fernandosalas.membership.service.implementation;
 
 import lombok.AllArgsConstructor;
-import net.fernandosalas.ems.entity.Membership;
-import net.fernandosalas.ems.entity.User;
-import net.fernandosalas.ems.repository.MembershipRepository;
-import net.fernandosalas.ems.service.MembershipService;
+import net.fernandosalas.membership.entity.Membership;
+import net.fernandosalas.membership.repository.MembershipRepository;
+import net.fernandosalas.membership.service.MembershipService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,32 +17,32 @@ public class MembershipServiceImplementation implements MembershipService {
 
     @Override
     @Transactional
-    public void createForUser(User user) {
-        if (user == null || user.getId() == null) {
+    public void createForUserId(Long userId) {
+        if (userId == null) {
             return;
         }
-        if (membershipRepository.existsByUserId(user.getId())) {
+        if (membershipRepository.existsByUserId(userId)) {
             return;
         }
         Membership membership = new Membership();
-        membership.setUser(user);
+        membership.setUserId(userId);
         membership.setPoints(0L);
         membershipRepository.save(membership);
     }
 
     @Override
     @Transactional
-    public void addPointsForPurchase(User user, BigDecimal totalCost) {
-        if (user == null || user.getId() == null || totalCost == null || totalCost.signum() <= 0) {
+    public void addPointsForPurchase(Long userId, BigDecimal totalCost) {
+        if (userId == null || totalCost == null || totalCost.signum() <= 0) {
             return;
         }
         long pointsToAdd = totalCost.multiply(BigDecimal.TEN).longValue();
         if (pointsToAdd <= 0) {
             return;
         }
-        Membership membership = membershipRepository.findByUserId(user.getId())
+        Membership membership = membershipRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "Membership not found for user id: " + user.getId()));
+                        "Membership not found for user id: " + userId));
         membership.setPoints(membership.getPoints() + pointsToAdd);
         membershipRepository.save(membership);
     }

@@ -13,7 +13,7 @@ import net.fernandosalas.ems.exception.StudentHasNoPetException;
 import net.fernandosalas.ems.mapper.StudentMapper;
 import net.fernandosalas.ems.repository.DepartmentRepository;
 import net.fernandosalas.ems.repository.StudentRepository;
-import net.fernandosalas.ems.service.MembershipService;
+import net.fernandosalas.ems.service.MembershipRemoteService;
 import net.fernandosalas.ems.service.PetService;
 import net.fernandosalas.ems.service.StudentService;
 import net.fernandosalas.ems.service.UserService;
@@ -44,7 +44,7 @@ public class StudentServiceImplementation implements StudentService {
     private UserService userService;
 
     @Autowired
-    private MembershipService membershipService;
+    private MembershipRemoteService membershipRemoteService;
     @Override
     public StudentDto createStudent(StudentDto studentDto) {
         if (studentRepository.existsByEmail(studentDto.getEmail())) {
@@ -63,7 +63,7 @@ public class StudentServiceImplementation implements StudentService {
         User user = userService.createStudentUser(savedStudent.getEmail());
         savedStudent.setUser(user);
         studentRepository.save(savedStudent);
-        membershipService.createForUser(user);
+        membershipRemoteService.createForUserId(user.getId());
         return StudentMapper.mapToStudentDto(savedStudent);
     }
 
@@ -124,7 +124,7 @@ public class StudentServiceImplementation implements StudentService {
         User linkedUser = student.getUser();
         studentRepository.deleteById(studentId);
         if (linkedUser != null) {
-            membershipService.deleteByUserId(linkedUser.getId());
+            membershipRemoteService.deleteByUserId(linkedUser.getId());
             userService.deleteById(linkedUser.getId());
         }
     }

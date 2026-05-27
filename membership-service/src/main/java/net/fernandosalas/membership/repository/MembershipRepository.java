@@ -1,6 +1,6 @@
-package net.fernandosalas.ems.repository;
+package net.fernandosalas.membership.repository;
 
-import net.fernandosalas.ems.entity.Membership;
+import net.fernandosalas.membership.entity.Membership;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

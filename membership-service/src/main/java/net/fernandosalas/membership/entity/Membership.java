@@ -1,4 +1,4 @@
-package net.fernandosalas.ems.entity;
+package net.fernandosalas.membership.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,9 +18,8 @@ public class Membership {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
+    @Column(name = "user_id", nullable = false, unique = true)
+    private Long userId;
 
     @Column(name = "points", nullable = false)
     private long points = 0L;

@@ -1,0 +1,10 @@
+net\fernandosalas\membership\service\implementation\MembershipServiceImplementation.class
+net\fernandosalas\membership\dto\CreateMembershipRequest.class
+net\fernandosalas\membership\repository\MembershipRepository.class
+net\fernandosalas\membership\controller\InternalMembershipController.class
+net\fernandosalas\membership\dto\PurchasePointsRequest.class
+net\fernandosalas\membership\service\MembershipService.class
+net\fernandosalas\membership\config\InternalApiKeyFilter.class
+net\fernandosalas\membership\dto\MembershipPointsResponse.class
+net\fernandosalas\membership\MembershipServiceApplication.class
+net\fernandosalas\membership\entity\Membership.class

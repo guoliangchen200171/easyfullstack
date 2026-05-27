@@ -13,7 +13,7 @@ import net.fernandosalas.ems.exception.UsernameAlreadyExistsException;
 import net.fernandosalas.ems.repository.DepartmentRepository;
 import net.fernandosalas.ems.repository.StudentRepository;
 import net.fernandosalas.ems.service.AuthRegistrationService;
-import net.fernandosalas.ems.service.MembershipService;
+import net.fernandosalas.ems.service.MembershipRemoteService;
 import net.fernandosalas.ems.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ public class AuthRegistrationServiceImplementation implements AuthRegistrationSe
     private final DepartmentRepository departmentRepository;
     private final StudentRepository studentRepository;
     private final UserService userService;
-    private final MembershipService membershipService;
+    private final MembershipRemoteService membershipRemoteService;
 
     @Override
     @Transactional
@@ -71,6 +71,6 @@ public class AuthRegistrationServiceImplementation implements AuthRegistrationSe
         User user = userService.createStudentUser(savedStudent.getEmail());
         savedStudent.setUser(user);
         studentRepository.save(savedStudent);
-        membershipService.createForUser(user);
+        membershipRemoteService.createForUserId(user.getId());
     }
 }

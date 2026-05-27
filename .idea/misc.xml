@@ -5,6 +5,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/ems-backend/pom.xml" />
+        <option value="$PROJECT_DIR$/membership-service/pom.xml" />
       </list>
     </option>
   </component>
