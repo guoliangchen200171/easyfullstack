@@ -11,4 +11,6 @@ public interface UserService {
     boolean existsByUsername(String username);
 
     void deleteById(Long userId);
+
+    void changePassword(Long userId, String currentPassword, String newPassword);
 }

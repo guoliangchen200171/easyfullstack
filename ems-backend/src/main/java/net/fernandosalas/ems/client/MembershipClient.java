@@ -7,10 +7,7 @@ import net.fernandosalas.ems.config.MembershipFeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(
-        name = "membership-service",
-        url = "${membership.service.url}",
-        configuration = MembershipFeignConfig.class)
+@FeignClient(name = "membership-service", configuration = MembershipFeignConfig.class)
 public interface MembershipClient {
 
     @PostMapping("/api/internal/memberships")

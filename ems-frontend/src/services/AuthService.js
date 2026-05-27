@@ -19,3 +19,7 @@ export const registerDepartment = (data) => {
 export const registerStudent = (data) => {
   return api.post("/api/auth/register/student", data);
 };
+
+export const changePassword = (currentPassword, newPassword) => {
+  return api.put("/api/auth/change-password", { currentPassword, newPassword });
+};

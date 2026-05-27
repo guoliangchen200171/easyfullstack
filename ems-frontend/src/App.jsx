@@ -29,6 +29,7 @@ import RegisterStudentComponent from "./components/RegisterStudentComponent";
 import AdoptionApprovalComponent from "./components/AdoptionApprovalComponent";
 import ProductManagementComponent from "./components/ProductManagementComponent";
 import ListProductOrderComponent from "./components/ListProductOrderComponent";
+import ChangePasswordComponent from "./components/ChangePasswordComponent";
 
 const AdminLayout = () => (
   <>
@@ -116,6 +117,10 @@ function App() {
               path="/student/orders"
               element={<StudentProductOrderHistoryComponent />}
             />
+            <Route
+              path="/student/change-password"
+              element={<ChangePasswordComponent />}
+            />
           </Route>
         </Route>
 
@@ -124,6 +129,10 @@ function App() {
             <Route
               path="/department/dashboard"
               element={<DepartmentDashboardComponent />}
+            />
+            <Route
+              path="/department/change-password"
+              element={<ChangePasswordComponent />}
             />
           </Route>
         </Route>

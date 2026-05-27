@@ -3,11 +3,14 @@ package net.fernandosalas.ems.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import net.fernandosalas.ems.dto.ChangePasswordRequest;
 import net.fernandosalas.ems.dto.DepartmentRegisterRequest;
 import net.fernandosalas.ems.dto.LoginRequest;
 import net.fernandosalas.ems.dto.StudentRegisterRequest;
+import net.fernandosalas.ems.security.SecurityUtils;
 import net.fernandosalas.ems.security.UserPrincipal;
 import net.fernandosalas.ems.service.AuthRegistrationService;
+import net.fernandosalas.ems.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,6 +38,7 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final AuthRegistrationService authRegistrationService;
+    private final UserService userService;
     private final SecurityContextRepository securityContextRepository =
             new HttpSessionSecurityContextRepository();
 
@@ -79,6 +83,17 @@ public class AuthController {
                     .body(Map.of("authenticated", false));
         }
         return ResponseEntity.ok(buildAuthResponse(authentication, null));
+    }
+
+    @Operation(summary = "修改密码", description = "学生或院系登录后修改自己的密码，需提供原密码")
+    @PutMapping("/change-password")
+    public ResponseEntity<Map<String, String>> changePassword(
+            @RequestBody ChangePasswordRequest request) {
+        userService.changePassword(
+                SecurityUtils.getCurrentUser().getId(),
+                request.getCurrentPassword(),
+                request.getNewPassword());
+        return ResponseEntity.ok(Map.of("message", "密码修改成功"));
     }
 
     @Operation(summary = "注册部门账号", description = "公开注册，创建部门及部门登录用户")

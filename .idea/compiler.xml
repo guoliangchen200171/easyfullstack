@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="membership-service" />
+        <module name="eureka-server" />
         <module name="ems-backend" />
       </profile>
     </annotationProcessing>
@@ -15,6 +16,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ems-backend" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
       <module name="membership-service" options="-parameters" />
     </option>
   </component>
