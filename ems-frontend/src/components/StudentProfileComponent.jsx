@@ -57,6 +57,10 @@ const StudentProfileComponent = () => {
                 <th scope="row">会员积分</th>
                 <td>{profile.membershipPoints ?? 0}</td>
               </tr>
+              <tr>
+                <th scope="row">会员等级</th>
+                <td>{profile.membershipLevel ?? "BRONZE"}</td>
+              </tr>
             </tbody>
           </table>
         </div>

@@ -12,6 +12,7 @@ const useStudentProductPurchaseHook = () => {
   const [products, setProducts] = useState([]);
   const [deposit, setDeposit] = useState(0);
   const [membershipPoints, setMembershipPoints] = useState(0);
+  const [membershipLevel, setMembershipLevel] = useState("BRONZE");
   const [quantities, setQuantities] = useState({});
   const lastPurchaseTimestamps = useRef(new Map());
 
@@ -20,6 +21,7 @@ const useStudentProductPurchaseHook = () => {
       const response = await getMyProfile();
       setDeposit(Number(response.data.deposit ?? 0));
       setMembershipPoints(Number(response.data.membershipPoints ?? 0));
+      setMembershipLevel(response.data.membershipLevel ?? "BRONZE");
     } catch (err) {
       console.log(err);
     }
@@ -107,6 +109,7 @@ const useStudentProductPurchaseHook = () => {
     products,
     deposit,
     membershipPoints,
+    membershipLevel,
     quantities,
     setQuantity,
     handlePurchase,

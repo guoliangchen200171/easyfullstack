@@ -5,6 +5,7 @@ const StudentProductPurchaseComponent = () => {
     products,
     deposit,
     membershipPoints,
+    membershipLevel,
     quantities,
     setQuantity,
     handlePurchase,
@@ -17,7 +18,7 @@ const StudentProductPurchaseComponent = () => {
     <div className="container mt-4">
       <h2 className="text-center mb-4">商品购买</h2>
       <div className="alert alert-info">
-        当前存款：{formatDeposit(deposit)} 元 · 会员积分：{membershipPoints ?? 0}
+        当前存款：{formatDeposit(deposit)} 元 · 会员积分：{membershipPoints ?? 0} · 会员等级：{membershipLevel ?? "BRONZE"}
       </div>
       <table className="table table-striped">
         <thead>

@@ -12,4 +12,5 @@ import lombok.Setter;
 public class MembershipPointsResponse {
     private Long userId;
     private long points;
+    private String memberLevel;
 }

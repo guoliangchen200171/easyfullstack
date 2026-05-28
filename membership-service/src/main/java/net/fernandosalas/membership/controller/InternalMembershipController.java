@@ -30,8 +30,7 @@ public class InternalMembershipController {
 
     @GetMapping("/users/{userId}/points")
     public ResponseEntity<MembershipPointsResponse> getPoints(@PathVariable Long userId) {
-        long points = membershipService.getPointsByUserId(userId);
-        return ResponseEntity.ok(new MembershipPointsResponse(userId, points));
+        return ResponseEntity.ok(membershipService.getMembershipByUserId(userId));
     }
 
     @PostMapping("/users/{userId}/points/purchase")
@@ -39,7 +38,6 @@ public class InternalMembershipController {
             @PathVariable Long userId,
             @RequestBody PurchasePointsRequest request) {
         membershipService.addPointsForPurchase(userId, request.getTotalCost());
-        long points = membershipService.getPointsByUserId(userId);
-        return ResponseEntity.ok(new MembershipPointsResponse(userId, points));
+        return ResponseEntity.ok(membershipService.getMembershipByUserId(userId));
     }
 }

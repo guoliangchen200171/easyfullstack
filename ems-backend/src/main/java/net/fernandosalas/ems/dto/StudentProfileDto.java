@@ -23,4 +23,5 @@ public class StudentProfileDto {
     private int returnCount;
     private BigDecimal deposit;
     private long membershipPoints;
+    private String membershipLevel;
 }

@@ -1,6 +1,7 @@
 package net.fernandosalas.ems.service.implementation;
 
 import lombok.AllArgsConstructor;
+import net.fernandosalas.ems.client.dto.MembershipPointsResponse;
 import net.fernandosalas.ems.dto.AdoptionHistoryDto;
 import net.fernandosalas.ems.dto.AdoptionRequestDto;
 import net.fernandosalas.ems.dto.PageResponse;
@@ -220,9 +221,9 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
         Department department = student.getDepartment();
         Pet pet = student.getPet();
         User user = student.getUser();
-        long membershipPoints = user != null
-                ? membershipRemoteService.getPointsByUserId(user.getId())
-                : 0L;
+        MembershipPointsResponse membership = user != null
+                ? membershipRemoteService.getMembershipByUserId(user.getId())
+                : new MembershipPointsResponse(null, 0L, "BRONZE");
         return new StudentProfileDto(
                 student.getId(),
                 student.getFirstName(),
@@ -234,6 +235,7 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
                 pet != null ? pet.getName() : null,
                 student.getReturnCount(),
                 student.getDeposit(),
-                membershipPoints);
+                membership.getPoints(),
+                membership.getMemberLevel() != null ? membership.getMemberLevel() : "BRONZE");
     }
 }

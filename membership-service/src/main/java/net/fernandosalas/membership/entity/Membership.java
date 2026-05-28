@@ -23,4 +23,7 @@ public class Membership {
 
     @Column(name = "points", nullable = false)
     private long points = 0L;
+
+    @Column(name = "member_level", nullable = false)
+    private String memberLevel = "BRONZE";
 }
