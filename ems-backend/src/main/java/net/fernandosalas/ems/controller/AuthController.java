@@ -6,9 +6,14 @@ import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.ChangePasswordRequest;
 import net.fernandosalas.ems.dto.DepartmentRegisterRequest;
 import net.fernandosalas.ems.dto.LoginRequest;
+import net.fernandosalas.ems.dto.PublicPasswordVerifyRequest;
+import net.fernandosalas.ems.dto.PublicStudentChangePasswordRequest;
 import net.fernandosalas.ems.dto.StudentRegisterRequest;
+import net.fernandosalas.ems.enums.Role;
+import net.fernandosalas.ems.exception.InvalidSearchParameterException;
 import net.fernandosalas.ems.security.SecurityUtils;
 import net.fernandosalas.ems.security.UserPrincipal;
+import net.fernandosalas.ems.service.AuthPasswordService;
 import net.fernandosalas.ems.service.AuthRegistrationService;
 import net.fernandosalas.ems.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,6 +44,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final AuthRegistrationService authRegistrationService;
     private final UserService userService;
+    private final AuthPasswordService authPasswordService;
     private final SecurityContextRepository securityContextRepository =
             new HttpSessionSecurityContextRepository();
 
@@ -85,12 +91,42 @@ public class AuthController {
         return ResponseEntity.ok(buildAuthResponse(authentication, null));
     }
 
-    @Operation(summary = "修改密码", description = "学生或院系登录后修改自己的密码，需提供原密码")
+    @Operation(summary = "修改密码", description = "学生登录后修改自己的密码，需提供原密码")
     @PutMapping("/change-password")
     public ResponseEntity<Map<String, String>> changePassword(
             @RequestBody ChangePasswordRequest request) {
+        if (SecurityUtils.getCurrentUser().getRole() != Role.STUDENT) {
+            throw new InvalidSearchParameterException(
+                    AuthPasswordService.UNSUPPORTED_ROLE_MESSAGE);
+        }
         userService.changePassword(
                 SecurityUtils.getCurrentUser().getId(),
+                request.getCurrentPassword(),
+                request.getNewPassword());
+        return ResponseEntity.ok(Map.of("message", "密码修改成功"));
+    }
+
+    @Operation(summary = "登录页改密-验证学生身份", description = "未登录；仅 STUDENT 返回成功，非学生返回 400")
+    @PostMapping("/verify-password-for-change")
+    @SecurityRequirements
+    public ResponseEntity<Map<String, Object>> verifyPasswordForChange(
+            @RequestBody PublicPasswordVerifyRequest request) {
+        authPasswordService.verifyStudentForPasswordChange(
+                request.getUsername(),
+                request.getCurrentPassword());
+        return ResponseEntity.ok(Map.of(
+                "verified", true,
+                "role", Role.STUDENT.name(),
+                "message", "验证成功"));
+    }
+
+    @Operation(summary = "登录页改密-设置新密码", description = "未登录；仅学生可修改密码")
+    @PostMapping("/student-change-password")
+    @SecurityRequirements
+    public ResponseEntity<Map<String, String>> studentChangePassword(
+            @RequestBody PublicStudentChangePasswordRequest request) {
+        authPasswordService.changeStudentPasswordPublic(
+                request.getUsername(),
                 request.getCurrentPassword(),
                 request.getNewPassword());
         return ResponseEntity.ok(Map.of("message", "密码修改成功"));

@@ -30,11 +30,6 @@ const DepartmentHeader = () => {
                 部门看板
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/department/change-password">
-                修改密码
-              </NavLink>
-            </li>
           </ul>
           <button
             className="btn btn-outline-light btn-sm me-3"

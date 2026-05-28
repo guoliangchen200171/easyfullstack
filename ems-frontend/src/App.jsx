@@ -30,6 +30,8 @@ import AdoptionApprovalComponent from "./components/AdoptionApprovalComponent";
 import ProductManagementComponent from "./components/ProductManagementComponent";
 import ListProductOrderComponent from "./components/ListProductOrderComponent";
 import ChangePasswordComponent from "./components/ChangePasswordComponent";
+import LoginPasswordVerifyComponent from "./components/LoginPasswordVerifyComponent";
+import LoginSetNewPasswordComponent from "./components/LoginSetNewPasswordComponent";
 
 const AdminLayout = () => (
   <>
@@ -57,6 +59,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginComponent />} />
+        <Route
+          path="/login/change-password"
+          element={<LoginPasswordVerifyComponent />}
+        />
+        <Route
+          path="/login/change-password/set"
+          element={<LoginSetNewPasswordComponent />}
+        />
         <Route
           path="/register/department"
           element={<RegisterDepartmentComponent />}
@@ -129,10 +139,6 @@ function App() {
             <Route
               path="/department/dashboard"
               element={<DepartmentDashboardComponent />}
-            />
-            <Route
-              path="/department/change-password"
-              element={<ChangePasswordComponent />}
             />
           </Route>
         </Route>

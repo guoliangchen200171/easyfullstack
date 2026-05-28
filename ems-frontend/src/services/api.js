@@ -14,9 +14,9 @@ api.interceptors.response.use(
   (error) => {
     const requestUrl = error.config?.url || "";
     const isAuthLogin = requestUrl.includes("/api/auth/login");
-    const isOnLoginPage = window.location.pathname === "/login";
+    const isOnLoginFlow = window.location.pathname.startsWith("/login");
 
-    if (error.response?.status === 401 && !isAuthLogin && !isOnLoginPage) {
+    if (error.response?.status === 401 && !isAuthLogin && !isOnLoginFlow) {
       window.location.href = "/login";
     }
 

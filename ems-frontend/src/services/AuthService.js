@@ -23,3 +23,22 @@ export const registerStudent = (data) => {
 export const changePassword = (currentPassword, newPassword) => {
   return api.put("/api/auth/change-password", { currentPassword, newPassword });
 };
+
+export const verifyPasswordForChange = (username, currentPassword) => {
+  return api.post("/api/auth/verify-password-for-change", {
+    username,
+    currentPassword,
+  });
+};
+
+export const studentChangePasswordPublic = (
+  username,
+  currentPassword,
+  newPassword
+) => {
+  return api.post("/api/auth/student-change-password", {
+    username,
+    currentPassword,
+    newPassword,
+  });
+};

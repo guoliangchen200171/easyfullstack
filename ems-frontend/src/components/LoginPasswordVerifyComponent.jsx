@@ -1,31 +1,28 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { login } from "../services/AuthService";
-import { useAuth } from "../context/AuthContext";
+import { verifyPasswordForChange } from "../services/AuthService";
 
-const LoginComponent = () => {
+const LoginPasswordVerifyComponent = () => {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setAuthUser, getHomePath } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await login(username, password);
-      setAuthUser(response.data);
-      toast.success("登录成功");
-      navigate(getHomePath(response.data.role));
+      await verifyPasswordForChange(username, currentPassword);
+      navigate("/login/change-password/set", {
+        state: {
+          verifiedStudent: true,
+          username: username.trim(),
+          currentPassword,
+        },
+      });
     } catch (err) {
-      const message =
-        err.response?.data?.message ||
-        (err.response
-          ? "账号或密码错误"
-          : "无法连接服务器，请确认后端已启动");
-      toast.error(message);
+      toast.error(err.response?.data?.message || "验证失败");
     } finally {
       setLoading(false);
     }
@@ -35,8 +32,10 @@ const LoginComponent = () => {
     <div className="container mt-5" style={{ maxWidth: "420px" }}>
       <div className="card shadow-sm">
         <div className="card-body p-4">
-          <h2 className="text-center mb-4">登录</h2>
-          <p className="text-muted text-center mb-4">学生宠物系统</p>
+          <h2 className="text-center mb-4">验证身份</h2>
+          <p className="text-muted text-center mb-4">
+            仅学生账号可修改密码，请先验证用户名与原密码
+          </p>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="username" className="form-label">
@@ -53,15 +52,15 @@ const LoginComponent = () => {
               />
             </div>
             <div className="mb-4">
-              <label htmlFor="password" className="form-label">
-                密码
+              <label htmlFor="currentPassword" className="form-label">
+                原密码
               </label>
               <input
-                id="password"
+                id="currentPassword"
                 type="password"
                 className="form-control"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
                 required
                 autoComplete="current-password"
               />
@@ -71,17 +70,11 @@ const LoginComponent = () => {
               className="btn btn-primary w-100"
               disabled={loading}
             >
-              {loading ? "登录中..." : "登录"}
+              {loading ? "验证中..." : "验证身份"}
             </button>
           </form>
           <div className="text-center mt-3">
-            <Link to="/register/student" className="me-3">
-              学生注册
-            </Link>
-            <Link to="/register/department" className="me-3">
-              部门注册
-            </Link>
-            <Link to="/login/change-password">修改密码</Link>
+            <Link to="/login">返回登录</Link>
           </div>
         </div>
       </div>
@@ -89,4 +82,4 @@ const LoginComponent = () => {
   );
 };
 
-export default LoginComponent;
+export default LoginPasswordVerifyComponent;
