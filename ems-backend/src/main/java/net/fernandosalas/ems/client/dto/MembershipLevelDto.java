@@ -9,9 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MembershipPointsResponse {
-    private Long userId;
-    private long points;
-    private String memberLevel;
+public class MembershipLevelDto {
+    private Long id;
+    private String levelCode;
     private String levelName;
+    private long minPoints;
+    private String description;
+    private int sortOrder;
 }

@@ -12,4 +12,6 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
     void deleteByUserId(Long userId);
 
     boolean existsByUserId(Long userId);
+
+    long countByMemberLevel(String memberLevel);
 }

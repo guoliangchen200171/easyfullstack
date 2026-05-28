@@ -1,13 +1,13 @@
 package net.fernandosalas.membership.service.implementation;
 
 import lombok.AllArgsConstructor;
+import net.fernandosalas.membership.dto.MembershipPointsResponse;
 import net.fernandosalas.membership.entity.Membership;
 import net.fernandosalas.membership.repository.MembershipRepository;
+import net.fernandosalas.membership.service.MembershipLevelService;
 import net.fernandosalas.membership.service.MembershipService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import net.fernandosalas.membership.dto.MembershipPointsResponse;
 
 import java.math.BigDecimal;
 
@@ -15,14 +15,10 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class MembershipServiceImplementation implements MembershipService {
 
-    private final MembershipRepository membershipRepository;
+    private static final String DEFAULT_LEVEL_CODE = "BRONZE";
 
-    // 等级阈值集中在此方法，修改这里的数字即可调整等级划分
-    private String computeLevel(long points) {
-        if (points >= 10000) return "GOLD";
-        if (points >= 3000)  return "SILVER";
-        return "BRONZE";
-    }
+    private final MembershipRepository membershipRepository;
+    private final MembershipLevelService membershipLevelService;
 
     @Override
     @Transactional
@@ -36,7 +32,7 @@ public class MembershipServiceImplementation implements MembershipService {
         Membership membership = new Membership();
         membership.setUserId(userId);
         membership.setPoints(0L);
-        membership.setMemberLevel(computeLevel(0L));
+        membership.setMemberLevel(membershipLevelService.resolveLevelCode(0L));
         membershipRepository.save(membership);
     }
 
@@ -50,12 +46,10 @@ public class MembershipServiceImplementation implements MembershipService {
         if (pointsToAdd <= 0) {
             return;
         }
-        Membership membership = membershipRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "Membership not found for user id: " + userId));
+        Membership membership = findOrCreateMembership(userId);
         long newPoints = membership.getPoints() + pointsToAdd;
         membership.setPoints(newPoints);
-        membership.setMemberLevel(computeLevel(newPoints));
+        membership.setMemberLevel(membershipLevelService.resolveLevelCode(newPoints));
         membershipRepository.save(membership);
     }
 
@@ -71,14 +65,13 @@ public class MembershipServiceImplementation implements MembershipService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public MembershipPointsResponse getMembershipByUserId(Long userId) {
         if (userId == null) {
-            return new MembershipPointsResponse(null, 0L, "BRONZE");
+            return new MembershipPointsResponse(null, 0L, DEFAULT_LEVEL_CODE, "铜牌会员");
         }
-        return membershipRepository.findByUserId(userId)
-                .map(m -> new MembershipPointsResponse(m.getUserId(), m.getPoints(), m.getMemberLevel()))
-                .orElse(new MembershipPointsResponse(userId, 0L, "BRONZE"));
+        Membership membership = findOrCreateMembership(userId);
+        return toResponse(membership);
     }
 
     @Override
@@ -87,5 +80,29 @@ public class MembershipServiceImplementation implements MembershipService {
         if (userId != null) {
             membershipRepository.deleteByUserId(userId);
         }
+    }
+
+    private Membership findOrCreateMembership(Long userId) {
+        return membershipRepository.findByUserId(userId)
+                .orElseGet(() -> {
+                    createForUserId(userId);
+                    return membershipRepository.findByUserId(userId)
+                            .orElseThrow(() -> new IllegalStateException(
+                                    "Membership not found for user id: " + userId));
+                });
+    }
+
+    private MembershipPointsResponse toResponse(Membership membership) {
+        String levelCode = membershipLevelService.resolveLevelCode(membership.getPoints());
+        if (!levelCode.equals(membership.getMemberLevel())) {
+            membership.setMemberLevel(levelCode);
+            membershipRepository.save(membership);
+        }
+        String levelName = membershipLevelService.resolveLevelName(levelCode);
+        return new MembershipPointsResponse(
+                membership.getUserId(),
+                membership.getPoints(),
+                levelCode,
+                levelName);
     }
 }

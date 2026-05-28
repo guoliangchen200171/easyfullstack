@@ -28,6 +28,7 @@ import RegisterDepartmentComponent from "./components/RegisterDepartmentComponen
 import RegisterStudentComponent from "./components/RegisterStudentComponent";
 import AdoptionApprovalComponent from "./components/AdoptionApprovalComponent";
 import ProductManagementComponent from "./components/ProductManagementComponent";
+import MembershipLevelManagementComponent from "./components/MembershipLevelManagementComponent";
 import ListProductOrderComponent from "./components/ListProductOrderComponent";
 import ChangePasswordComponent from "./components/ChangePasswordComponent";
 import LoginPasswordVerifyComponent from "./components/LoginPasswordVerifyComponent";
@@ -77,6 +78,10 @@ function App() {
           <Route element={<AdminLayout />}>
             <Route path="/" element={<Navigate to="/products" replace />} />
             <Route path="/products" element={<ProductManagementComponent />} />
+            <Route
+              path="/membership-levels"
+              element={<MembershipLevelManagementComponent />}
+            />
             <Route path="/students" element={<ListStudentComponent />} />
             <Route path="/add-student" element={<StudentComponent />} />
             <Route path="/edit-student/:id" element={<StudentComponent />} />

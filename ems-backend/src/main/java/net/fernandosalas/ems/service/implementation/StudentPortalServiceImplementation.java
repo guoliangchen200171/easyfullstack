@@ -223,7 +223,9 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
         User user = student.getUser();
         MembershipPointsResponse membership = user != null
                 ? membershipRemoteService.getMembershipByUserId(user.getId())
-                : new MembershipPointsResponse(null, 0L, "BRONZE");
+                : new MembershipPointsResponse(null, 0L, "BRONZE", "铜牌会员");
+        String levelCode = membership.getMemberLevel() != null ? membership.getMemberLevel() : "BRONZE";
+        String levelName = membership.getLevelName() != null ? membership.getLevelName() : levelCode;
         return new StudentProfileDto(
                 student.getId(),
                 student.getFirstName(),
@@ -236,6 +238,7 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
                 student.getReturnCount(),
                 student.getDeposit(),
                 membership.getPoints(),
-                membership.getMemberLevel() != null ? membership.getMemberLevel() : "BRONZE");
+                levelCode,
+                levelName);
     }
 }

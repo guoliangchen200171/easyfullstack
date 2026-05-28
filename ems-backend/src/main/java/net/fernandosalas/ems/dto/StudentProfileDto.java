@@ -24,4 +24,5 @@ public class StudentProfileDto {
     private BigDecimal deposit;
     private long membershipPoints;
     private String membershipLevel;
+    private String membershipLevelName;
 }

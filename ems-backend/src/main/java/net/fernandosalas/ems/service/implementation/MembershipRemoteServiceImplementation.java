@@ -63,14 +63,14 @@ public class MembershipRemoteServiceImplementation implements MembershipRemoteSe
     @Override
     public MembershipPointsResponse getMembershipByUserId(Long userId) {
         if (userId == null) {
-            return new MembershipPointsResponse(null, 0L, "BRONZE");
+            return new MembershipPointsResponse(null, 0L, "BRONZE", "铜牌会员");
         }
         try {
             MembershipPointsResponse response = membershipClient.getPoints(userId);
-            return response != null ? response : new MembershipPointsResponse(userId, 0L, "BRONZE");
+            return response != null ? response : new MembershipPointsResponse(userId, 0L, "BRONZE", "铜牌会员");
         } catch (FeignException ex) {
             log.warn("Failed to fetch membership for userId={}, returning default", userId, ex);
-            return new MembershipPointsResponse(userId, 0L, "BRONZE");
+            return new MembershipPointsResponse(userId, 0L, "BRONZE", "铜牌会员");
         }
     }
 

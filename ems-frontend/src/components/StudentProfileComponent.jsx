@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
 import { getMyProfile } from "../services/StudentPortalService";
+import { formatMembershipLevel } from "../utils/formatMembershipLevel";
 
 const StudentProfileComponent = () => {
   const [profile, setProfile] = useState(null);
+  const [loadError, setLoadError] = useState(null);
 
   useEffect(() => {
-    getMyProfile().then((res) => setProfile(res.data));
+    setLoadError(null);
+    getMyProfile()
+      .then((res) => setProfile(res.data))
+      .catch(() => setLoadError("会员信息加载失败，请确认后端已启动并重新登录"));
   }, []);
+
+  if (loadError) {
+    return (
+      <div className="container mt-5">
+        <div className="alert alert-danger text-center">{loadError}</div>
+      </div>
+    );
+  }
 
   if (!profile) {
     return (
@@ -15,6 +28,11 @@ const StudentProfileComponent = () => {
       </div>
     );
   }
+
+  const levelDisplay = formatMembershipLevel(
+    profile.membershipLevelName,
+    profile.membershipLevel
+  );
 
   return (
     <div className="container mt-4">
@@ -49,9 +67,7 @@ const StudentProfileComponent = () => {
               </tr>
               <tr>
                 <th scope="row">存款</th>
-                <td>
-                  {Number(profile.deposit ?? 0).toFixed(2)} 元
-                </td>
+                <td>{Number(profile.deposit ?? 0).toFixed(2)} 元</td>
               </tr>
               <tr>
                 <th scope="row">会员积分</th>
@@ -59,7 +75,7 @@ const StudentProfileComponent = () => {
               </tr>
               <tr>
                 <th scope="row">会员等级</th>
-                <td>{profile.membershipLevel ?? "BRONZE"}</td>
+                <td>{levelDisplay}</td>
               </tr>
             </tbody>
           </table>

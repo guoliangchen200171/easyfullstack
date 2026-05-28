@@ -1,4 +1,5 @@
 import useStudentProductPurchaseHook from "../hooks/useStudentProductPurchaseHook";
+import { formatMembershipLevel } from "../utils/formatMembershipLevel";
 
 const StudentProductPurchaseComponent = () => {
   const {
@@ -6,6 +7,7 @@ const StudentProductPurchaseComponent = () => {
     deposit,
     membershipPoints,
     membershipLevel,
+    membershipLevelName,
     quantities,
     setQuantity,
     handlePurchase,
@@ -18,7 +20,8 @@ const StudentProductPurchaseComponent = () => {
     <div className="container mt-4">
       <h2 className="text-center mb-4">商品购买</h2>
       <div className="alert alert-info">
-        当前存款：{formatDeposit(deposit)} 元 · 会员积分：{membershipPoints ?? 0} · 会员等级：{membershipLevel ?? "BRONZE"}
+        当前存款：{formatDeposit(deposit)} 元 · 会员积分：{membershipPoints ?? 0}{" "}
+        · 会员等级：{formatMembershipLevel(membershipLevelName, membershipLevel)}
       </div>
       <table className="table table-striped">
         <thead>
