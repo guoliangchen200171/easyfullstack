@@ -70,6 +70,18 @@ $ git clone https://github.com/LuisSalas94/Student-Management-System
 
 With these steps, you'll have the necessary environment set up to run the Spring Boot backend and the React frontend of the application locally.
 
+## Local Kafka (optional)
+
+For local development / learning, Kafka runs in Docker (KRaft, no Zookeeper), separate from the app services:
+
+```powershell
+docker compose -f docker-compose.kafka.yml up -d
+```
+
+See [docs/kafka-docker.md](docs/kafka-docker.md) for install, verify, and troubleshooting. Bootstrap: `localhost:9092`, UI: http://localhost:8085 .
+
+After a student purchase, membership points are added asynchronously via topic `membership.purchase.points` (producer: ems-backend, consumer: membership-service).
+
 ## Author 👤
 
 - GitHub: [@LuisSalas94](https://github.com/LuisSalas94)

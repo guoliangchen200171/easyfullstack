@@ -1,9 +1,8 @@
 package net.fernandosalas.ems.event;
 
-import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.fernandosalas.ems.service.MembershipRemoteService;
+import net.fernandosalas.ems.kafka.MembershipPurchasePointsProducer;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -13,21 +12,15 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Slf4j
 public class PurchaseCompletedEventListener {
 
-    private final MembershipRemoteService membershipRemoteService;
+    private final MembershipPurchasePointsProducer membershipPurchasePointsProducer;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onPurchaseCompleted(PurchaseCompletedEvent event) {
         if (event.getUserId() == null) {
             return;
         }
-        try {
-            membershipRemoteService.addPointsForPurchase(event.getUserId(), event.getTotalCost());
-        } catch (FeignException ex) {
-            log.error(
-                    "Membership points not added after purchase commit: userId={}, totalCost={}",
-                    event.getUserId(),
-                    event.getTotalCost(),
-                    ex);
-        }
+        membershipPurchasePointsProducer.publishPurchasePoints(
+                event.getUserId(),
+                event.getTotalCost());
     }
 }
