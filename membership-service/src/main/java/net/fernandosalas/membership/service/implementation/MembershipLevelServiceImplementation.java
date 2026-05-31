@@ -12,6 +12,7 @@ import net.fernandosalas.membership.service.MembershipLevelService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -70,6 +71,7 @@ public class MembershipLevelServiceImplementation implements MembershipLevelServ
         if (dto.getSortOrder() > 0) {
             entity.setSortOrder(dto.getSortOrder());
         }
+        entity.setDiscountRate(dto.getDiscountRate() != null ? dto.getDiscountRate() : BigDecimal.ZERO);
         MembershipLevel saved = membershipLevelRepository.save(entity);
         recalculateAllMemberLevels();
         return toDto(saved);
@@ -112,6 +114,17 @@ public class MembershipLevelServiceImplementation implements MembershipLevelServ
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public BigDecimal resolveDiscountRate(String levelCode) {
+        if (levelCode == null || levelCode.isBlank()) {
+            return BigDecimal.ZERO;
+        }
+        return membershipLevelRepository.findByLevelCode(levelCode)
+                .map(MembershipLevel::getDiscountRate)
+                .orElse(BigDecimal.ZERO);
+    }
+
+    @Override
     @Transactional
     public void recalculateAllMemberLevels() {
         List<Membership> memberships = membershipRepository.findAll();
@@ -144,6 +157,10 @@ public class MembershipLevelServiceImplementation implements MembershipLevelServ
         if (duplicate) {
             throw new MembershipBadRequestException("等级代码已存在: " + code);
         }
+        BigDecimal rate = dto.getDiscountRate();
+        if (rate != null && (rate.compareTo(BigDecimal.ZERO) < 0 || rate.compareTo(BigDecimal.ONE) > 0)) {
+            throw new MembershipBadRequestException("折扣率必须在 0 到 1 之间");
+        }
     }
 
     private void applyDto(MembershipLevel entity, MembershipLevelDto dto) {
@@ -152,6 +169,7 @@ public class MembershipLevelServiceImplementation implements MembershipLevelServ
         entity.setMinPoints(dto.getMinPoints());
         entity.setDescription(dto.getDescription());
         entity.setSortOrder(dto.getSortOrder() > 0 ? dto.getSortOrder() : (int) dto.getMinPoints());
+        entity.setDiscountRate(dto.getDiscountRate() != null ? dto.getDiscountRate() : BigDecimal.ZERO);
     }
 
     private MembershipLevelDto toDto(MembershipLevel entity) {
@@ -161,6 +179,7 @@ public class MembershipLevelServiceImplementation implements MembershipLevelServ
                 entity.getLevelName(),
                 entity.getMinPoints(),
                 entity.getDescription(),
-                entity.getSortOrder());
+                entity.getSortOrder(),
+                entity.getDiscountRate());
     }
 }

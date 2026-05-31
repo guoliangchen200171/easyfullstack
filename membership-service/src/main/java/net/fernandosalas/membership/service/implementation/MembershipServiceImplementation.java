@@ -68,7 +68,7 @@ public class MembershipServiceImplementation implements MembershipService {
     @Transactional
     public MembershipPointsResponse getMembershipByUserId(Long userId) {
         if (userId == null) {
-            return new MembershipPointsResponse(null, 0L, DEFAULT_LEVEL_CODE, "铜牌会员");
+            return new MembershipPointsResponse(null, 0L, DEFAULT_LEVEL_CODE, "铜牌会员", BigDecimal.ZERO);
         }
         Membership membership = findOrCreateMembership(userId);
         return toResponse(membership);
@@ -99,10 +99,12 @@ public class MembershipServiceImplementation implements MembershipService {
             membershipRepository.save(membership);
         }
         String levelName = membershipLevelService.resolveLevelName(levelCode);
+        BigDecimal discountRate = membershipLevelService.resolveDiscountRate(levelCode);
         return new MembershipPointsResponse(
                 membership.getUserId(),
                 membership.getPoints(),
                 levelCode,
-                levelName);
+                levelName,
+                discountRate);
     }
 }

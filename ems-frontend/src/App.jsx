@@ -33,6 +33,8 @@ import ListProductOrderComponent from "./components/ListProductOrderComponent";
 import ChangePasswordComponent from "./components/ChangePasswordComponent";
 import LoginPasswordVerifyComponent from "./components/LoginPasswordVerifyComponent";
 import LoginSetNewPasswordComponent from "./components/LoginSetNewPasswordComponent";
+import AnnouncementManagementComponent from "./components/AnnouncementManagementComponent";
+import StudentAnnouncements from "./components/StudentAnnouncements";
 
 const AdminLayout = () => (
   <>
@@ -109,6 +111,10 @@ function App() {
             <Route
               path="/product-orders"
               element={<ListProductOrderComponent />}
+            />
+            <Route
+              path="/announcements"
+              element={<AnnouncementManagementComponent />}
             />
           </Route>
         </Route>

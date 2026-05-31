@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,4 +18,5 @@ public class MembershipLevelDto {
     private long minPoints;
     private String description;
     private int sortOrder;
+    private BigDecimal discountRate;
 }

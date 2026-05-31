@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,4 +16,5 @@ public class MembershipPointsResponse {
     private long points;
     private String memberLevel;
     private String levelName;
+    private BigDecimal discountRate;
 }

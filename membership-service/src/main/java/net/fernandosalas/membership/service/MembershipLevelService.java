@@ -2,6 +2,7 @@ package net.fernandosalas.membership.service;
 
 import net.fernandosalas.membership.dto.MembershipLevelDto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface MembershipLevelService {
@@ -19,6 +20,8 @@ public interface MembershipLevelService {
     String resolveLevelCode(long points);
 
     String resolveLevelName(String levelCode);
+
+    BigDecimal resolveDiscountRate(String levelCode);
 
     void recalculateAllMemberLevels();
 }

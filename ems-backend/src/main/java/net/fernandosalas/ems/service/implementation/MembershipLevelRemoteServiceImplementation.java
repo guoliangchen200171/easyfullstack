@@ -98,7 +98,8 @@ public class MembershipLevelRemoteServiceImplementation implements MembershipLev
                 client.getLevelName(),
                 client.getMinPoints(),
                 client.getDescription(),
-                client.getSortOrder());
+                client.getSortOrder(),
+                client.getDiscountRate());
     }
 
     private net.fernandosalas.ems.client.dto.MembershipLevelDto toClientDto(MembershipLevelDto dto) {
@@ -108,6 +109,7 @@ public class MembershipLevelRemoteServiceImplementation implements MembershipLev
                 dto.getLevelName(),
                 dto.getMinPoints(),
                 dto.getDescription(),
-                dto.getSortOrder());
+                dto.getSortOrder(),
+                dto.getDiscountRate());
     }
 }

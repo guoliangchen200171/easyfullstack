@@ -19,7 +19,7 @@ public class InternalMembershipController {
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody CreateMembershipRequest request) {
         membershipService.createForUserId(request.getUserId());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/users/{userId}")

@@ -66,6 +66,11 @@ const HeaderComponent = () => {
                   下单记录
                 </NavLink>
               </li>
+              <li className="nav-item">
+                <NavLink className="nav-link px-2 px-md-3" to="/announcements">
+                  Announcements
+                </NavLink>
+              </li>
             </ul>
             <button
               type="button"

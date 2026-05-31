@@ -8,13 +8,14 @@ import net.fernandosalas.ems.client.dto.PurchasePointsRequest;
 import java.util.List;
 import net.fernandosalas.ems.config.MembershipFeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "membership-service", configuration = MembershipFeignConfig.class)
 public interface MembershipClient {
 
     @PostMapping("/api/internal/memberships")
-    void createMembership(@RequestBody CreateMembershipRequest request);
+    ResponseEntity<Void> createMembership(@RequestBody CreateMembershipRequest request);
 
     @DeleteMapping("/api/internal/memberships/users/{userId}")
     void deleteByUserId(@PathVariable("userId") Long userId);

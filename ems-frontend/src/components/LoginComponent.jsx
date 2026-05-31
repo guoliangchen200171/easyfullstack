@@ -40,7 +40,7 @@ const LoginComponent = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="username" className="form-label">
-                用户名
+                用户名（学生请填注册邮箱）
               </label>
               <input
                 id="username"

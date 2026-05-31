@@ -18,6 +18,8 @@ import net.fernandosalas.ems.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Service
 @AllArgsConstructor
 public class AuthRegistrationServiceImplementation implements AuthRegistrationService {
@@ -66,6 +68,7 @@ public class AuthRegistrationServiceImplementation implements AuthRegistrationSe
         student.setEmail(request.getEmail());
         student.setDepartment(department);
         student.setReturnCount(0);
+        student.setDeposit(BigDecimal.ZERO);
         Student savedStudent = studentRepository.save(student);
 
         User user = userService.createStudentUser(savedStudent.getEmail());

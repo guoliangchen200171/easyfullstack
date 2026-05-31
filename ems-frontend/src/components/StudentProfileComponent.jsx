@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMyProfile } from "../services/StudentPortalService";
 import { formatMembershipLevel } from "../utils/formatMembershipLevel";
+import StudentAnnouncements from "./StudentAnnouncements";
 
 const StudentProfileComponent = () => {
   const [profile, setProfile] = useState(null);
@@ -36,6 +37,7 @@ const StudentProfileComponent = () => {
 
   return (
     <div className="container mt-4">
+      <StudentAnnouncements />
       <h2 className="text-center mb-4">我的信息</h2>
       <div className="card col-md-8 offset-md-2">
         <div className="card-body">

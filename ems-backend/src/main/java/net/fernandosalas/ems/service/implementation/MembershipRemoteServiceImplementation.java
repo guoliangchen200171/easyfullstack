@@ -30,6 +30,9 @@ public class MembershipRemoteServiceImplementation implements MembershipRemoteSe
         } catch (FeignException ex) {
             log.error("Failed to create membership for userId={}", userId, ex);
             throw new InvalidSearchParameterException("会员账户创建失败，请稍后重试");
+        } catch (Exception ex) {
+            log.error("Unexpected error creating membership for userId={}", userId, ex);
+            throw new InvalidSearchParameterException("会员账户创建失败，请稍后重试");
         }
     }
 
@@ -63,14 +66,14 @@ public class MembershipRemoteServiceImplementation implements MembershipRemoteSe
     @Override
     public MembershipPointsResponse getMembershipByUserId(Long userId) {
         if (userId == null) {
-            return new MembershipPointsResponse(null, 0L, "BRONZE", "铜牌会员");
+            return new MembershipPointsResponse(null, 0L, "BRONZE", "铜牌会员", BigDecimal.ZERO);
         }
         try {
             MembershipPointsResponse response = membershipClient.getPoints(userId);
-            return response != null ? response : new MembershipPointsResponse(userId, 0L, "BRONZE", "铜牌会员");
+            return response != null ? response : new MembershipPointsResponse(userId, 0L, "BRONZE", "铜牌会员", BigDecimal.ZERO);
         } catch (FeignException ex) {
             log.warn("Failed to fetch membership for userId={}, returning default", userId, ex);
-            return new MembershipPointsResponse(userId, 0L, "BRONZE", "铜牌会员");
+            return new MembershipPointsResponse(userId, 0L, "BRONZE", "铜牌会员", BigDecimal.ZERO);
         }
     }
 

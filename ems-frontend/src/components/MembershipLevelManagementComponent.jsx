@@ -105,6 +105,20 @@ const MembershipLevelManagementComponent = () => {
               />
             </div>
             <div className="col-md-2">
+              <label className="form-label">折扣率 (0~1)</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                className="form-control"
+                value={form.discountRate}
+                onChange={(e) =>
+                  setForm({ ...form, discountRate: e.target.value })
+                }
+              />
+            </div>
+            <div className="col-md-2">
               <label className="form-label">备注</label>
               <input
                 type="text"
@@ -135,6 +149,7 @@ const MembershipLevelManagementComponent = () => {
                 <th>名称</th>
                 <th>最低积分</th>
                 <th>排序</th>
+                <th>折扣率</th>
                 <th>备注</th>
                 <th>操作</th>
               </tr>
@@ -198,6 +213,22 @@ const MembershipLevelManagementComponent = () => {
                     </td>
                     <td>
                       <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="1"
+                        className="form-control form-control-sm"
+                        value={editDraft.discountRate}
+                        onChange={(e) =>
+                          setEditDraft({
+                            ...editDraft,
+                            discountRate: e.target.value,
+                          })
+                        }
+                      />
+                    </td>
+                    <td>
+                      <input
                         className="form-control form-control-sm"
                         value={editDraft.description}
                         onChange={(e) =>
@@ -232,6 +263,7 @@ const MembershipLevelManagementComponent = () => {
                     <td>{level.levelName}</td>
                     <td>{level.minPoints}</td>
                     <td>{level.sortOrder}</td>
+                    <td>{level.discountRate != null ? Number(level.discountRate).toFixed(4) : "0.0000"}</td>
                     <td>{level.description || "-"}</td>
                     <td>
                       <button
@@ -254,7 +286,7 @@ const MembershipLevelManagementComponent = () => {
               )}
               {levels.length === 0 && (
                 <tr>
-                  <td colSpan="7" className="text-center text-muted">
+                  <td colSpan="8" className="text-center text-muted">
                     暂无等级配置
                   </td>
                 </tr>

@@ -24,11 +24,19 @@ public class MigrateUserFk {
 
     public static void main(String[] args) throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Path sqlPath = Path.of("src/main/resources/db/migrate_user_fk.sql");
-        if (!Files.exists(sqlPath)) {
-            sqlPath = Path.of("ems-backend/src/main/resources/db/migrate_user_fk.sql");
+        List<String> statements = new ArrayList<>();
+        for (String fileName : List.of(
+                "migrate_user_fk.sql",
+                "drop_users_email.sql",
+                "fix_department_user_id.sql")) {
+            Path sqlPath = Path.of("src/main/resources/db/" + fileName);
+            if (!Files.exists(sqlPath)) {
+                sqlPath = Path.of("ems-backend/src/main/resources/db/" + fileName);
+            }
+            if (Files.exists(sqlPath)) {
+                statements.addAll(parseStatements(Files.readString(sqlPath)));
+            }
         }
-        List<String> statements = parseStatements(Files.readString(sqlPath));
 
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
             conn.setAutoCommit(false);
@@ -62,7 +70,9 @@ public class MigrateUserFk {
                 throw ex;
             }
 
-            describeUsers(conn);
+            describeTable(conn, "users");
+            describeTable(conn, "departments");
+            describeTable(conn, "students");
         }
     }
 
@@ -79,12 +89,13 @@ public class MigrateUserFk {
                 || msg.contains("unknown column 'u.department_id'");
     }
 
-    private static void describeUsers(Connection conn) throws SQLException {
-        System.out.println("\nusers table columns:");
+    private static void describeTable(Connection conn, String table) throws SQLException {
+        System.out.println("\n" + table + " table columns:");
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("DESCRIBE users")) {
+             ResultSet rs = stmt.executeQuery("DESCRIBE " + table)) {
             while (rs.next()) {
-                System.out.println("  - " + rs.getString("Field") + " (" + rs.getString("Type") + ")");
+                System.out.println("  - " + rs.getString("Field") + " ("
+                        + rs.getString("Type") + ", null=" + rs.getString("Null") + ")");
             }
         }
     }

@@ -22,5 +22,8 @@ WHERE d.user_id IS NULL;
 ALTER TABLE users DROP COLUMN student_id;
 ALTER TABLE users DROP COLUMN department_id;
 
--- 5. Verify final schema (optional)
+-- 5. Drop legacy users.email (JPA User entity uses username only; NOT NULL email breaks registration INSERT)
+ALTER TABLE users DROP COLUMN email;
+
+-- 6. Verify final schema (optional)
 -- DESCRIBE users;

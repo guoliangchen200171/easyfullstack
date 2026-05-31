@@ -13,6 +13,7 @@ const emptyForm = () => ({
   minPoints: "0",
   description: "",
   sortOrder: "0",
+  discountRate: "0",
 });
 
 const useMembershipLevelManagementHook = () => {
@@ -55,6 +56,7 @@ const useMembershipLevelManagementHook = () => {
         minPoints: Number(form.minPoints),
         description: form.description.trim() || null,
         sortOrder: Number(form.sortOrder) || Number(form.minPoints),
+        discountRate: parseFloat(form.discountRate) || 0,
       });
       toast.success("会员等级已创建");
       resetForm();
@@ -72,6 +74,7 @@ const useMembershipLevelManagementHook = () => {
       minPoints: String(level.minPoints),
       description: level.description || "",
       sortOrder: String(level.sortOrder ?? level.minPoints),
+      discountRate: String(level.discountRate ?? "0"),
     });
   };
 
@@ -88,6 +91,7 @@ const useMembershipLevelManagementHook = () => {
         minPoints: Number(editDraft.minPoints),
         description: editDraft.description.trim() || null,
         sortOrder: Number(editDraft.sortOrder) || Number(editDraft.minPoints),
+        discountRate: parseFloat(editDraft.discountRate) || 0,
       });
       toast.success("会员等级已更新");
       cancelEdit();

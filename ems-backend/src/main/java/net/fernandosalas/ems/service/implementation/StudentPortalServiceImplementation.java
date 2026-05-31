@@ -106,7 +106,25 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
                 .orElseThrow(() -> new ResourceNotFoundException("Student was not found"));
 
         BigDecimal price = detail.getPrice() != null ? detail.getPrice() : BigDecimal.ZERO;
-        BigDecimal totalCost = price.multiply(BigDecimal.valueOf(quantity));
+
+        BigDecimal discountRate = BigDecimal.ZERO;
+        User user = student.getUser();
+        if (user != null && user.getId() != null) {
+            try {
+                net.fernandosalas.ems.client.dto.MembershipPointsResponse membership =
+                        membershipRemoteService.getMembershipByUserId(user.getId());
+                if (membership != null && membership.getDiscountRate() != null) {
+                    discountRate = membership.getDiscountRate();
+                }
+            } catch (Exception ignored) {
+                // membership-service 不可用时不打折，继续购买
+            }
+        }
+        BigDecimal discountedPrice = price.multiply(discountRate.compareTo(BigDecimal.ZERO) == 0
+                        ? BigDecimal.ONE : discountRate)
+                .setScale(2, java.math.RoundingMode.HALF_UP);
+        BigDecimal totalCost = discountedPrice.multiply(BigDecimal.valueOf(quantity))
+                .setScale(2, java.math.RoundingMode.HALF_UP);
         BigDecimal deposit = student.getDeposit() != null ? student.getDeposit() : BigDecimal.ZERO;
 
         if (price.compareTo(BigDecimal.ZERO) <= 0) {
@@ -223,7 +241,7 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
         User user = student.getUser();
         MembershipPointsResponse membership = user != null
                 ? membershipRemoteService.getMembershipByUserId(user.getId())
-                : new MembershipPointsResponse(null, 0L, "BRONZE", "铜牌会员");
+                : new MembershipPointsResponse(null, 0L, "BRONZE", "铜牌会员", BigDecimal.ZERO);
         String levelCode = membership.getMemberLevel() != null ? membership.getMemberLevel() : "BRONZE";
         String levelName = membership.getLevelName() != null ? membership.getLevelName() : levelCode;
         return new StudentProfileDto(

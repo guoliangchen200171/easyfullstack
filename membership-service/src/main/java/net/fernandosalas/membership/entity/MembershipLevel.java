@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @Setter
@@ -32,4 +34,7 @@ public class MembershipLevel {
 
     @Column(name = "sort_order", nullable = false)
     private int sortOrder;
+
+    @Column(name = "discount_rate", nullable = false, precision = 5, scale = 4)
+    private BigDecimal discountRate = BigDecimal.ZERO;
 }
