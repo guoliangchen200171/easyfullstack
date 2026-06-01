@@ -36,6 +36,7 @@ import LoginSetNewPasswordComponent from "./components/LoginSetNewPasswordCompon
 import AnnouncementManagementComponent from "./components/AnnouncementManagementComponent";
 import StudentAnnouncements from "./components/StudentAnnouncements";
 import ListRestockRecordComponent from "./components/ListRestockRecordComponent";
+import ListAnnouncementHistoryComponent from "./components/ListAnnouncementHistoryComponent";
 
 const AdminLayout = () => (
   <>
@@ -120,6 +121,10 @@ function App() {
             <Route
               path="/restock-records"
               element={<ListRestockRecordComponent />}
+            />
+            <Route
+              path="/announcement-history"
+              element={<ListAnnouncementHistoryComponent />}
             />
           </Route>
         </Route>

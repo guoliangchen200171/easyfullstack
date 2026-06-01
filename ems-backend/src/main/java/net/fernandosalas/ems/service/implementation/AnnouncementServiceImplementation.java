@@ -7,6 +7,7 @@ import net.fernandosalas.ems.exception.InvalidSearchParameterException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
 import net.fernandosalas.ems.mapper.AnnouncementMapper;
 import net.fernandosalas.ems.repository.AnnouncementRepository;
+import net.fernandosalas.ems.service.AnnouncementHistoryService;
 import net.fernandosalas.ems.service.AnnouncementService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ public class AnnouncementServiceImplementation implements AnnouncementService {
     private static final int MAX_ACTIVE_ANNOUNCEMENTS = 3;
 
     private final AnnouncementRepository announcementRepository;
+    private final AnnouncementHistoryService announcementHistoryService;
 
     @Override
     @Transactional
@@ -32,7 +34,9 @@ public class AnnouncementServiceImplementation implements AnnouncementService {
         entity.setContent(announcement.getContent().trim());
         entity.setActive(announcement.isActive());
 
-        return AnnouncementMapper.toDto(announcementRepository.save(entity));
+        Announcement saved = announcementRepository.save(entity);
+        announcementHistoryService.recordHistory(saved.getId(), saved.getTitle(), "发布");
+        return AnnouncementMapper.toDto(saved);
     }
 
     @Override
@@ -66,13 +70,16 @@ public class AnnouncementServiceImplementation implements AnnouncementService {
         entity.setContent(announcement.getContent().trim());
         entity.setActive(announcement.isActive());
 
-        return AnnouncementMapper.toDto(announcementRepository.save(entity));
+        Announcement saved = announcementRepository.save(entity);
+        announcementHistoryService.recordHistory(saved.getId(), saved.getTitle(), "更改");
+        return AnnouncementMapper.toDto(saved);
     }
 
     @Override
     @Transactional
     public void deleteAnnouncement(Long announcementId) {
         Announcement announcement = findAnnouncement(announcementId);
+        announcementHistoryService.recordHistory(announcement.getId(), announcement.getTitle(), "删除");
         announcementRepository.delete(announcement);
     }
 
