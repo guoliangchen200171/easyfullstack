@@ -20,5 +20,9 @@ public interface ProductService {
 
     ProductDto deductStock(Long productId, int quantity);
 
+    ProductDto addStockByName(String name, int quantity);
+
+    ProductDto deductStockByName(String name, int quantity);
+
     void deleteProduct(Long productId);
 }

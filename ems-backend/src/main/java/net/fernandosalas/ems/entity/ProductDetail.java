@@ -25,7 +25,7 @@ public class ProductDetail {
     @JoinColumn(name = "product_id")
     private ProductInventory inventory;
 
-    @Column(name = "name", nullable = false,
+    @Column(name = "name", nullable = false, unique = true,
             columnDefinition = "VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     private String name;
 

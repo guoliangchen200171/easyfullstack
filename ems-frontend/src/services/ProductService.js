@@ -17,4 +17,10 @@ export const addProductStock = (id, quantity) =>
 export const deductProductStock = (id, quantity) =>
   api.put(`${REST_API_URL}/${id}/stock/deduct`, { quantity });
 
+export const addProductStockByName = (name, quantity) =>
+  api.put(`${REST_API_URL}/stock/add-by-name`, { name, quantity });
+
+export const deductProductStockByName = (name, quantity) =>
+  api.put(`${REST_API_URL}/stock/deduct-by-name`, { name, quantity });
+
 export const deleteProduct = (id) => api.delete(`${REST_API_URL}/${id}`);

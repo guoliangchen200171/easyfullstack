@@ -37,6 +37,7 @@ public class ProductServiceImplementation implements ProductService {
         validateProduct(product);
         validateStock(product.getStock());
         validatePrice(product.getPrice());
+        validateNameUnique(product.getName().trim(), null);
 
         ProductInventory inventory = new ProductInventory();
         inventory.setStock(product.getStock());
@@ -85,6 +86,7 @@ public class ProductServiceImplementation implements ProductService {
         validateProduct(product);
         validateStock(product.getStock());
         validatePrice(product.getPrice());
+        validateNameUnique(product.getName().trim(), productId);
 
         ProductInventory inventory = inventoryRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -159,6 +161,22 @@ public class ProductServiceImplementation implements ProductService {
         stockCacheService.deleteStock(productId);
     }
 
+    @Override
+    @Transactional
+    public ProductDto addStockByName(String name, int quantity) {
+        ProductDetail detail = detailRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("商品不存在：" + name));
+        return addStock(detail.getProductId(), quantity);
+    }
+
+    @Override
+    @Transactional
+    public ProductDto deductStockByName(String name, int quantity) {
+        ProductDetail detail = detailRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("商品不存在：" + name));
+        return deductStock(detail.getProductId(), quantity);
+    }
+
     private ProductDto toDtoOrThrow(
             ProductInventory inventory,
             ProductDetailCacheDto detail,
@@ -178,6 +196,14 @@ public class ProductServiceImplementation implements ProductService {
         if (product.getName() == null || product.getName().isBlank()) {
             throw new InvalidSearchParameterException("商品名称不能为空");
         }
+    }
+
+    private void validateNameUnique(String name, Long excludeId) {
+        detailRepository.findByName(name).ifPresent(existing -> {
+            if (!existing.getProductId().equals(excludeId)) {
+                throw new InvalidSearchParameterException("商品名称已存在：" + name);
+            }
+        });
     }
 
     private void validateStock(int stock) {

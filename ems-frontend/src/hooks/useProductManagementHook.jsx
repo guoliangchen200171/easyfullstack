@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   addProductStock,
+  addProductStockByName,
   createProduct,
   deductProductStock,
+  deductProductStockByName,
   deleteProduct,
   listProducts,
   updateProduct,
@@ -15,7 +17,8 @@ const useProductManagementHook = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState(0);
   const [stock, setStock] = useState(0);
-  const [stockProductId, setStockProductId] = useState("");
+  const [stockMode, setStockMode] = useState("id");       // "id" | "name"
+  const [stockIdentifier, setStockIdentifier] = useState("");
   const [stockQuantity, setStockQuantity] = useState(1);
   const [editingId, setEditingId] = useState(null);
   const [editDraft, setEditDraft] = useState({
@@ -37,18 +40,31 @@ const useProductManagementHook = () => {
     fetchProducts();
   }, [fetchProducts]);
 
+  const handleStockModeChange = (mode) => {
+    setStockMode(mode);
+    setStockIdentifier("");
+  };
+
   const parseStockOperationInputs = () => {
-    const productId = Number(stockProductId);
     const quantity = Number(stockQuantity);
-    if (!stockProductId.trim() || Number.isNaN(productId) || productId <= 0) {
-      toast.error("请输入有效的商品 ID");
-      return null;
-    }
     if (Number.isNaN(quantity) || quantity <= 0) {
       toast.error("数量必须大于 0");
       return null;
     }
-    return { productId, quantity };
+    if (stockMode === "id") {
+      const productId = Number(stockIdentifier);
+      if (!stockIdentifier.trim() || Number.isNaN(productId) || productId <= 0) {
+        toast.error("请输入有效的商品 ID");
+        return null;
+      }
+      return { mode: "id", productId, quantity };
+    } else {
+      if (!stockIdentifier.trim()) {
+        toast.error("请输入商品名称");
+        return null;
+      }
+      return { mode: "name", name: stockIdentifier.trim(), quantity };
+    }
   };
 
   const handleCreate = async (e) => {
@@ -102,11 +118,13 @@ const useProductManagementHook = () => {
 
   const handleAddStock = async () => {
     const inputs = parseStockOperationInputs();
-    if (!inputs) {
-      return;
-    }
+    if (!inputs) return;
     try {
-      await addProductStock(inputs.productId, inputs.quantity);
+      if (inputs.mode === "id") {
+        await addProductStock(inputs.productId, inputs.quantity);
+      } else {
+        await addProductStockByName(inputs.name, inputs.quantity);
+      }
       toast.success("库存已增加");
       fetchProducts();
     } catch (err) {
@@ -116,11 +134,13 @@ const useProductManagementHook = () => {
 
   const handleDeductStock = async () => {
     const inputs = parseStockOperationInputs();
-    if (!inputs) {
-      return;
-    }
+    if (!inputs) return;
     try {
-      await deductProductStock(inputs.productId, inputs.quantity);
+      if (inputs.mode === "id") {
+        await deductProductStock(inputs.productId, inputs.quantity);
+      } else {
+        await deductProductStockByName(inputs.name, inputs.quantity);
+      }
       toast.success("库存已扣减");
       fetchProducts();
     } catch (err) {
@@ -177,8 +197,10 @@ const useProductManagementHook = () => {
     setPrice,
     stock,
     setStock,
-    stockProductId,
-    setStockProductId,
+    stockMode,
+    handleStockModeChange,
+    stockIdentifier,
+    setStockIdentifier,
     stockQuantity,
     setStockQuantity,
     editingId,

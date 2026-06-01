@@ -11,8 +11,10 @@ const ProductManagementComponent = () => {
     setPrice,
     stock,
     setStock,
-    stockProductId,
-    setStockProductId,
+    stockMode,
+    handleStockModeChange,
+    stockIdentifier,
+    setStockIdentifier,
     stockQuantity,
     setStockQuantity,
     editingId,
@@ -100,19 +102,45 @@ const ProductManagementComponent = () => {
       <div className="card mb-4">
         <div className="card-body">
           <h5 className="card-title">库存操作</h5>
+          <div className="mb-3 d-flex gap-3">
+            <div className="form-check">
+              <input
+                id="modeId"
+                type="radio"
+                className="form-check-input"
+                checked={stockMode === "id"}
+                onChange={() => handleStockModeChange("id")}
+              />
+              <label htmlFor="modeId" className="form-check-label">
+                按商品 ID
+              </label>
+            </div>
+            <div className="form-check">
+              <input
+                id="modeName"
+                type="radio"
+                className="form-check-input"
+                checked={stockMode === "name"}
+                onChange={() => handleStockModeChange("name")}
+              />
+              <label htmlFor="modeName" className="form-check-label">
+                按商品名称
+              </label>
+            </div>
+          </div>
           <div className="row g-3 align-items-end">
             <div className="col-md-3">
-              <label htmlFor="stockProductId" className="form-label">
-                商品 ID
+              <label htmlFor="stockIdentifier" className="form-label">
+                {stockMode === "id" ? "商品 ID" : "商品名称"}
               </label>
               <input
-                id="stockProductId"
-                type="number"
-                min="1"
+                id="stockIdentifier"
+                type={stockMode === "id" ? "number" : "text"}
+                min={stockMode === "id" ? "1" : undefined}
                 className="form-control"
-                placeholder="请输入商品 ID"
-                value={stockProductId}
-                onChange={(e) => setStockProductId(e.target.value)}
+                placeholder={stockMode === "id" ? "请输入商品 ID" : "请输入商品名称"}
+                value={stockIdentifier}
+                onChange={(e) => setStockIdentifier(e.target.value)}
               />
             </div>
             <div className="col-md-3">

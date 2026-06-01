@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import net.fernandosalas.ems.dto.ProductDto;
+import net.fernandosalas.ems.dto.StockByNameRequest;
 import net.fernandosalas.ems.dto.StockQuantityRequest;
 import net.fernandosalas.ems.dto.StockUpdateRequest;
 import net.fernandosalas.ems.service.ProductService;
@@ -66,6 +67,18 @@ public class ProductController {
     public ResponseEntity<ProductDto> deductStock(@PathVariable("id") Long productId,
                                                 @RequestBody StockQuantityRequest request) {
         return ResponseEntity.ok(productService.deductStock(productId, request.getQuantity()));
+    }
+
+    @Operation(summary = "按名称增加库存", description = "需要 ADMIN 角色")
+    @PutMapping("stock/add-by-name")
+    public ResponseEntity<ProductDto> addStockByName(@RequestBody StockByNameRequest request) {
+        return ResponseEntity.ok(productService.addStockByName(request.getName(), request.getQuantity()));
+    }
+
+    @Operation(summary = "按名称扣减库存", description = "需要 ADMIN 角色")
+    @PutMapping("stock/deduct-by-name")
+    public ResponseEntity<ProductDto> deductStockByName(@RequestBody StockByNameRequest request) {
+        return ResponseEntity.ok(productService.deductStockByName(request.getName(), request.getQuantity()));
     }
 
     @Operation(summary = "删除商品", description = "需要 ADMIN 角色")
