@@ -71,6 +71,11 @@ const HeaderComponent = () => {
                   Announcements
                 </NavLink>
               </li>
+              <li className="nav-item">
+                <NavLink className="nav-link px-2 px-md-3" to="/restock-records">
+                  补货记录
+                </NavLink>
+              </li>
             </ul>
             <button
               type="button"

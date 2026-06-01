@@ -13,6 +13,7 @@ import net.fernandosalas.ems.repository.ProductInventoryRepository;
 import net.fernandosalas.ems.service.ProductDetailCacheService;
 import net.fernandosalas.ems.service.ProductService;
 import net.fernandosalas.ems.service.ProductStockCacheService;
+import net.fernandosalas.ems.service.RestockRecordService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class ProductServiceImplementation implements ProductService {
     private final ProductDetailRepository detailRepository;
     private final ProductDetailCacheService detailCacheService;
     private final ProductStockCacheService stockCacheService;
+    private final RestockRecordService restockRecordService;
 
     @Override
     @Transactional
@@ -125,6 +127,7 @@ public class ProductServiceImplementation implements ProductService {
         inventory.setStock(inventory.getStock() + quantity);
         inventoryRepository.save(inventory);
         stockCacheService.setStock(productId, inventory.getStock());
+        restockRecordService.recordRestock(productId, inventory.getDetail().getName(), quantity, "补货");
         return getProductById(productId);
     }
 
@@ -141,6 +144,7 @@ public class ProductServiceImplementation implements ProductService {
         inventory.setStock(inventory.getStock() - quantity);
         inventoryRepository.save(inventory);
         stockCacheService.setStock(productId, inventory.getStock());
+        restockRecordService.recordRestock(productId, inventory.getDetail().getName(), quantity, "扣库存");
         return getProductById(productId);
     }
 

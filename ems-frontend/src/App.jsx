@@ -35,6 +35,7 @@ import LoginPasswordVerifyComponent from "./components/LoginPasswordVerifyCompon
 import LoginSetNewPasswordComponent from "./components/LoginSetNewPasswordComponent";
 import AnnouncementManagementComponent from "./components/AnnouncementManagementComponent";
 import StudentAnnouncements from "./components/StudentAnnouncements";
+import ListRestockRecordComponent from "./components/ListRestockRecordComponent";
 
 const AdminLayout = () => (
   <>
@@ -115,6 +116,10 @@ function App() {
             <Route
               path="/announcements"
               element={<AnnouncementManagementComponent />}
+            />
+            <Route
+              path="/restock-records"
+              element={<ListRestockRecordComponent />}
             />
           </Route>
         </Route>
