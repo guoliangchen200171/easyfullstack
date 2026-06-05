@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--
+      只输出到控制台（ConsoleAppender），不声明任何 FileAppender / RollingFileAppender，
+      因此不会生成任何日志文件或 logs 文件夹。
+    -->
+
+    <!-- 引入 Spring Boot 内置的默认配置（彩色转换器 %clr、日志级别字段等） -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- 控制台输出：在标准格式基础上加上请求追踪 ID [%X{traceId}] -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr([%X{traceId:-no-trace}]){magenta} %clr(${PID:-}){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 根日志级别 INFO，只挂控制台 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- 本项目业务包打到 DEBUG，能看到切面打印的入参/返回/耗时 -->
+    <logger name="net.fernandosalas.ems" level="INFO"/>
+</configuration>

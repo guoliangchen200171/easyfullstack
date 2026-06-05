@@ -3,6 +3,7 @@ package net.fernandosalas.ems.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.fernandosalas.ems.dto.ChangePasswordRequest;
 import net.fernandosalas.ems.dto.DepartmentRegisterRequest;
 import net.fernandosalas.ems.dto.LoginRequest;
@@ -38,6 +39,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
+@Slf4j
 @Tag(name = "认证", description = "登录、登出、注册与当前用户")
 public class AuthController {
 
@@ -65,8 +67,10 @@ public class AuthController {
             SecurityContextHolder.setContext(context);
             securityContextRepository.saveContext(context, request, response);
 
+            log.info("登录成功 username={}", loginRequest.getUsername());
             return ResponseEntity.ok(buildAuthResponse(authentication, "登录成功"));
         } catch (BadCredentialsException ex) {
+            log.warn("登录失败 username={} 原因=账号或密码错误", loginRequest.getUsername());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "账号或密码错误"));
         }

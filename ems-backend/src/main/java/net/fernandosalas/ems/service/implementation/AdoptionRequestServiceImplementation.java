@@ -1,6 +1,7 @@
 package net.fernandosalas.ems.service.implementation;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.fernandosalas.ems.dto.AdoptionRequestDto;
 import net.fernandosalas.ems.dto.PageResponse;
 import net.fernandosalas.ems.entity.AdoptionRequest;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AdoptionRequestServiceImplementation implements AdoptionRequestService {
 
     private final AdoptionRequestRepository adoptionRequestRepository;
@@ -60,6 +62,7 @@ public class AdoptionRequestServiceImplementation implements AdoptionRequestServ
         request.setStatus(AdoptionRequestStatus.PENDING);
         request.setRequestedAt(LocalDateTime.now());
         AdoptionRequest saved = adoptionRequestRepository.save(request);
+        log.info("领养申请提交 studentId={}, petId={}, requestId={}", studentId, petId, saved.getId());
         return AdoptionRequestMapper.mapToDto(
                 adoptionRequestRepository.findWithDetailsById(saved.getId()).orElseThrow());
     }
@@ -92,6 +95,8 @@ public class AdoptionRequestServiceImplementation implements AdoptionRequestServ
         request.setStatus(AdoptionRequestStatus.APPROVED);
         request.setReviewedAt(LocalDateTime.now());
         adoptionRequestRepository.save(request);
+        log.info("领养申请通过 requestId={}, studentId={}, petId={}",
+                requestId, request.getStudent().getId(), request.getPet().getId());
         return AdoptionRequestMapper.mapToDto(
                 adoptionRequestRepository.findWithDetailsById(requestId).orElseThrow());
     }
@@ -103,6 +108,8 @@ public class AdoptionRequestServiceImplementation implements AdoptionRequestServ
         request.setStatus(AdoptionRequestStatus.DENIED);
         request.setReviewedAt(LocalDateTime.now());
         adoptionRequestRepository.save(request);
+        log.info("领养申请拒绝 requestId={}, studentId={}, petId={}",
+                requestId, request.getStudent().getId(), request.getPet().getId());
         return AdoptionRequestMapper.mapToDto(
                 adoptionRequestRepository.findWithDetailsById(requestId).orElseThrow());
     }

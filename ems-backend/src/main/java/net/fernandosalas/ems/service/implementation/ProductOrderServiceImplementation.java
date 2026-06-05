@@ -1,6 +1,7 @@
 package net.fernandosalas.ems.service.implementation;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.fernandosalas.ems.dto.PageResponse;
 import net.fernandosalas.ems.dto.ProductOrderDto;
 import net.fernandosalas.ems.entity.ProductInventory;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ProductOrderServiceImplementation implements ProductOrderService {
 
     private final ProductOrderRepository productOrderRepository;
@@ -40,6 +42,8 @@ public class ProductOrderServiceImplementation implements ProductOrderService {
         order.setTotalPrice(totalPrice);
         order.setOrderedAt(LocalDateTime.now());
         productOrderRepository.save(order);
+        log.info("下单成功 studentId={}, product={}, qty={}, total={}",
+                student.getId(), productName, quantity, totalPrice);
     }
 
     @Override

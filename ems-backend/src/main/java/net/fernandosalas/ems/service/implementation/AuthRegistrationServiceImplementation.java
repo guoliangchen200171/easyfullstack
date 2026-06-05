@@ -1,6 +1,7 @@
 package net.fernandosalas.ems.service.implementation;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.fernandosalas.ems.dto.DepartmentRegisterRequest;
 import net.fernandosalas.ems.dto.StudentRegisterRequest;
 import net.fernandosalas.ems.entity.Department;
@@ -22,6 +23,7 @@ import java.math.BigDecimal;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AuthRegistrationServiceImplementation implements AuthRegistrationService {
 
     private final DepartmentRepository departmentRepository;
@@ -46,6 +48,8 @@ public class AuthRegistrationServiceImplementation implements AuthRegistrationSe
         department.setDepartmentDescription(request.getDepartmentDescription());
         department.setUser(user);
         departmentRepository.save(department);
+        log.info("部门注册成功 username={}, departmentName={}",
+                request.getUsername(), request.getDepartmentName());
     }
 
     @Override
@@ -75,5 +79,7 @@ public class AuthRegistrationServiceImplementation implements AuthRegistrationSe
         savedStudent.setUser(user);
         studentRepository.save(savedStudent);
         membershipRemoteService.createForUserId(user.getId());
+        log.info("学生注册成功 studentId={}, email={}, departmentId={}",
+                savedStudent.getId(), savedStudent.getEmail(), request.getDepartmentId());
     }
 }
