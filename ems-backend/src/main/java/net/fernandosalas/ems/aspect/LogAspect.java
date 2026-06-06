@@ -12,8 +12,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * 统一日志切面：自动给 controller 与 service 实现层的方法打印
- * 「入参 / 返回值 / 耗时 / 异常」，无需在业务代码里手写日志。
+ * 学生购买商品、部门自助注册链路日志切面：自动打印「入参 / 返回值 / 耗时 / 异常」。
  *
  * <p>只打印到控制台（由 logback-spring.xml 控制），异常仅记录后原样抛出，
  * 仍交给 GlobalExceptionHandler 统一处理。
@@ -23,17 +22,28 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LogAspect {
 
-    /** Controller 层所有方法 */
-    @Pointcut("execution(* net.fernandosalas.ems.controller..*(..))")
-    public void controllerLayer() {
+    @Pointcut("execution(* net.fernandosalas.ems.controller.StudentPortalController.purchaseProduct(..))")
+    public void studentPurchaseController() {
     }
 
-    /** Service 实现层所有方法 */
-    @Pointcut("execution(* net.fernandosalas.ems.service.implementation..*(..))")
-    public void serviceLayer() {
+    @Pointcut("execution(* net.fernandosalas.ems.service.implementation.StudentPortalServiceImplementation.purchaseProductForCurrentStudent(..))")
+    public void studentPurchaseService() {
     }
 
-    @Around("controllerLayer() || serviceLayer()")
+    @Pointcut("execution(* net.fernandosalas.ems.service.implementation.ProductOrderServiceImplementation.recordOrder(..))")
+    public void recordOrder() {
+    }
+
+    @Pointcut("execution(* net.fernandosalas.ems.controller.AuthController.registerDepartment(..))")
+    public void departmentRegisterController() {
+    }
+
+    @Pointcut("execution(* net.fernandosalas.ems.service.implementation.AuthRegistrationServiceImplementation.registerDepartment(..))")
+    public void departmentRegisterService() {
+    }
+
+    @Around("studentPurchaseController() || studentPurchaseService() || recordOrder()"
+            + " || departmentRegisterController() || departmentRegisterService()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         String method = joinPoint.getSignature().getDeclaringType().getSimpleName()
                 + "." + joinPoint.getSignature().getName();

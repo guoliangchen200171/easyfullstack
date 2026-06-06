@@ -47,9 +47,9 @@ public class AuthRegistrationServiceImplementation implements AuthRegistrationSe
         department.setDepartmentName(request.getDepartmentName());
         department.setDepartmentDescription(request.getDepartmentDescription());
         department.setUser(user);
-        departmentRepository.save(department);
-        log.info("部门注册成功 username={}, departmentName={}",
-                request.getUsername(), request.getDepartmentName());
+        Department saved = departmentRepository.save(department);
+        log.info("部门注册成功 departmentId={}, username={}, departmentName={}",
+                saved.getId(), request.getUsername(), request.getDepartmentName());
     }
 
     @Override
