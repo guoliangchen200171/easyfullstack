@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
- * 给学生购买商品、部门自助注册请求生成 16 位追踪 ID 放进 MDC，配合 logback-spring.xml 里的 uuid： 前缀输出，
+ * 给学生购买商品、部门自助注册请求生成 16 位追踪 ID 放进 MDC，配合 logback-spring.xml 里的 traceid： 前缀输出，
  * 让同一次链路的所有日志（切面 + 业务日志）在控制台带同一个 traceId，便于串联排查。
  */
 @Component

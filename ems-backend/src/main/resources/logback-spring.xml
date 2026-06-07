@@ -8,10 +8,10 @@
     <!-- 引入 Spring Boot 内置的默认配置（彩色转换器 %clr、日志级别字段等） -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <!-- 控制台输出：精简格式 = 时间 + 级别 + uuid（有 traceId 时） + 类名 + 内容 -->
+    <!-- 控制台输出：精简格式 = 时间 + 级别 + traceid（有 traceId 时） + 类名 + 内容 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5p) %clr(%replace(%X{traceId}){'^(.+)$','uuid：$1 '}){magenta}%clr(%logger{20}){cyan} %clr(:){faint} %m%n%wEx</pattern>
+            <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5p) %clr(%replace(%X{traceId}){'^(.+)$','traceid：$1 '}){magenta}%clr(%logger{20}){cyan} %clr(:){faint} %m%n%wEx</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
