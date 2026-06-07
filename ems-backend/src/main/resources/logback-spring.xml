@@ -21,6 +21,13 @@
         <appender-ref ref="CONSOLE"/>
     </root>
 
-    <!-- 本项目业务包打到 DEBUG，能看到切面打印的入参/返回/耗时 -->
+    <!-- 本项目业务包日志级别 INFO -->
     <logger name="net.fernandosalas.ems" level="INFO"/>
+
+    <!-- 第三方框架日志压到 WARN：平时闭嘴，只在出错时才打，避免刷屏淹没业务日志 -->
+    <!-- Kafka 客户端 + Spring Kafka -->
+    <logger name="org.apache.kafka" level="WARN"/>
+    <logger name="org.springframework.kafka" level="WARN"/>
+    <!-- Eureka / Netflix 全家桶（ConfigClusterResolver 等） -->
+    <logger name="com.netflix" level="WARN"/>
 </configuration>

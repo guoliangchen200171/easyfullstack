@@ -16,6 +16,8 @@ import net.fernandosalas.ems.entity.ProductInventory;
 import net.fernandosalas.ems.entity.Student;
 import net.fernandosalas.ems.entity.User;
 import net.fernandosalas.ems.enums.Role;
+import net.fernandosalas.ems.exception.InsufficientBalanceException;
+import net.fernandosalas.ems.exception.InsufficientStockException;
 import net.fernandosalas.ems.exception.InvalidSearchParameterException;
 import net.fernandosalas.ems.exception.ResourceNotFoundException;
 import net.fernandosalas.ems.repository.ProductInventoryRepository;
@@ -132,13 +134,13 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
         }
 
         if (deposit.compareTo(totalCost) < 0) {
-            throw new InvalidSearchParameterException("存款余额不足");
+            throw new InsufficientBalanceException(studentId, totalCost, deposit);
         }
 
         Optional<Long> redisDeduct = stockCacheService.deductIfAvailable(productId, quantity);
         if (redisDeduct.isPresent()) {
             if (redisDeduct.get() == INSUFFICIENT_STOCK) {
-                throw new InvalidSearchParameterException("库存不足");
+                throw new InsufficientStockException(productId, quantity);
             }
             return completePurchaseWithDb(
                     productId, quantity, detail, student, price, totalCost, redisDeduct.get().intValue(), true);
@@ -165,7 +167,7 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
             if (rollbackRedisOnDbFailure) {
                 stockCacheService.rollback(productId, quantity);
             }
-            throw new InvalidSearchParameterException("库存不足");
+            throw new InsufficientStockException(productId, quantity);
         }
 
         BigDecimal deposit = student.getDeposit() != null ? student.getDeposit() : BigDecimal.ZERO;
@@ -203,7 +205,7 @@ public class StudentPortalServiceImplementation implements StudentPortalService 
                         "Product was not found with id: " + productId));
 
         if (inventory.getStock() < quantity) {
-            throw new InvalidSearchParameterException("库存不足");
+            throw new InsufficientStockException(productId, quantity);
         }
 
         return completePurchaseWithDb(
