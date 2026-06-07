@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
- * 给学生购买商品、部门自助注册请求生成短追踪 ID 放进 MDC，配合 logback-spring.xml 里的 [%X{traceId}]，
+ * 给学生购买商品、部门自助注册请求生成 16 位追踪 ID 放进 MDC，配合 logback-spring.xml 里的 uuid： 前缀输出，
  * 让同一次链路的所有日志（切面 + 业务日志）在控制台带同一个 traceId，便于串联排查。
  */
 @Component
@@ -39,7 +39,7 @@ public class TraceIdFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        MDC.put(TRACE_ID, UUID.randomUUID().toString().substring(0, 8));
+        MDC.put(TRACE_ID, newTraceId());
         try {
             filterChain.doFilter(request, response);
         } finally {
@@ -57,5 +57,9 @@ public class TraceIdFilter extends OncePerRequestFilter {
         }
         return STUDENT_PURCHASE_PATH.matcher(uri).matches()
                 || DEPARTMENT_REGISTER_PATH.matcher(uri).matches();
+    }
+
+    private static String newTraceId() {
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
     }
 }

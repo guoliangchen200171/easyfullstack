@@ -42,7 +42,7 @@ public class ProductOrderServiceImplementation implements ProductOrderService {
         order.setTotalPrice(totalPrice);
         order.setOrderedAt(LocalDateTime.now());
         productOrderRepository.save(order);
-        log.info("下单成功 studentId={}, productId={}, product={}, qty={}, total={}",
+        log.info("下单成功:\n  studentId={}\n  productId={}\n  product={}\n  qty={}\n  total={}",
                 student.getId(), product.getId(), productName, quantity, totalPrice);
     }
 
