@@ -15,7 +15,6 @@
             <charset>UTF-8</charset>
         </encoder>
     </appender>
-
     <!-- 根日志级别 INFO，只挂控制台 -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

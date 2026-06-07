@@ -15,8 +15,8 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
- * 给学生购买商品、部门自助注册请求生成 16 位追踪 ID 放进 MDC，配合 logback-spring.xml 里的 traceid： 前缀输出，
- * 让同一次链路的所有业务日志在控制台带同一个 traceId，便于串联排查。
+ * 给学生购买商品、部门自助注册、管理员创建商品请求生成 16 位追踪 ID 放进 MDC，
+ * 配合 logback-spring.xml 里的 traceid： 前缀输出，让同一次链路的业务日志在控制台带同一个 traceId。
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -29,6 +29,9 @@ public class TraceIdFilter extends OncePerRequestFilter {
 
     private static final Pattern DEPARTMENT_REGISTER_PATH =
             Pattern.compile(".*/api/auth/register/department$");
+
+    private static final Pattern ADMIN_CREATE_PRODUCT_PATH =
+            Pattern.compile(".*/api/products$");
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -56,7 +59,8 @@ public class TraceIdFilter extends OncePerRequestFilter {
             return false;
         }
         return STUDENT_PURCHASE_PATH.matcher(uri).matches()
-                || DEPARTMENT_REGISTER_PATH.matcher(uri).matches();
+                || DEPARTMENT_REGISTER_PATH.matcher(uri).matches()
+                || ADMIN_CREATE_PRODUCT_PATH.matcher(uri).matches();
     }
 
     private static String newTraceId() {
